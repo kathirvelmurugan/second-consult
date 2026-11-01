@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" class="h-full bg-slate-900 text-slate-100">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ALO DOCTOR | Master Clinical Flow & Role Cockpit</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#f0fdf4',
+              100: '#dcfce7',
+              500: '#22c55e',
+              600: '#16a34a',
+              700: '#15803d',
+              800: '#166534',
+              900: '#14532d',
+            },
+            saudi: '#006C35',
+            accent: '#0284c7'
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* Custom scrollbar */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #0f172a; }
+    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #475569; }
+    .pulse-ring {
+      animation: pulse-ring 2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+    }
+    @keyframes pulse-ring {
+      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
+      70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(34, 197, 94, 0); }
+      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+    }
+  </style>
+</head>
+<body class="min-h-full flex flex-col font-sans antialiased text-slate-200 bg-slate-950">
+
+  <!-- TOP APP HEADER -->
+  <header class="sticky top-0 z-50 bg-slate-900/95 backdrop-blur border-b border-slate-800 shadow-xl">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+      <div class="flex items-center justify-between gap-4">
+        
+        <!-- Brand & Case Details -->
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-600 to-emerald-400 flex items-center justify-center font-bold text-white shadow-lg shadow-emerald-900/40 text-lg">
+            ع
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h1 class="text-lg font-bold tracking-tight text-white flex items-center gap-2">
+                ALO DOCTOR <span class="text-xs px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-medium">KSA Edition v2.4</span>
+              </h1>
+            </div>
+            <p class="text-xs text-slate-400">Connected Second Opinion & Partner Care Platform</p>
+          </div>
+        </div>
+
+        <!-- Case Live Context Capsule -->
+        <div class="hidden md:flex items-center gap-4 bg-slate-950/80 px-4 py-1.5 rounded-lg border border-slate-800 text-xs">
+          <div>
+            <span class="text-slate-500 block text-[10px] uppercase">Active Case</span>
+            <span class="font-mono font-semibold text-emerald-400" id="currentCaseId">ALO-2026-9812</span>
+          </div>
+          <div class="h-6 w-px bg-slate-800"></div>
+          <div>
+            <span class="text-slate-500 block text-[10px] uppercase">Patient</span>
+            <span class="font-medium text-slate-200">Salem Al-Otaibi (58y, Riyadh)</span>
+          </div>
+          <div class="h-6 w-px bg-slate-800"></div>
+          <div>
+            <span class="text-slate-500 block text-[10px] uppercase">Condition</span>
+            <span class="font-medium text-amber-400">Aortic Valve Stenosis</span>
+          </div>
+          <div class="h-6 w-px bg-slate-800"></div>
+          <div>
+            <span class="text-slate-500 block text-[10px] uppercase">Time in System</span>
+            <span class="font-mono text-cyan-400" id="caseElapsed">04h 22m</span>
+          </div>
+        </div>
+
+        <!-- Utility Buttons -->
+        <div class="flex items-center gap-2">
+          <button onclick="resetFlow()" title="Reset to Stage 1" class="px-3 py-1.5 text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg border border-slate-700 transition flex items-center gap-1.5">
+            <i class="fa-solid fa-arrow-rotate-left"></i>
+            <span class="hidden sm:inline">Reset Flow</span>
+          </button>
+          <button onclick="toggleTimelineDrawer()" class="px-3 py-1.5 text-xs bg-emerald-600 hover:bg-emerald-500 text-white font-medium rounded-lg shadow-sm transition flex items-center gap-1.5">
+            <i class="fa-solid fa-clock-rotate-left"></i>
+            <span>Timeline</span>
+            <span id="timelineCountBadge" class="bg-emerald-950 text-emerald-300 text-[10px] px-1.5 py-0.2 rounded-full">4</span>
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ROLE SWITCHER BAR (CRITICAL USER NEED) -->
+    <div class="bg-slate-900 border-t border-slate-800 px-4 sm:px-6 lg:px-8 py-2.5">
+      <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
+        
+        <div class="flex items-center gap-2 shrink-0">
+          <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+            <i class="fa-solid fa-user-shield text-emerald-400"></i> Role Switcher:
+          </span>
+          <span class="text-xs text-slate-500 hidden sm:inline">(Click to switch perspective)</span>
+        </div>
+
+        <!-- 11 Actor Roles Badges -->
+        <div class="flex items-center gap-1.5 overflow-x-auto w-full md:w-auto pb-1 md:pb-0 scrollbar-none" id="rolePillsContainer">
+          <!-- Populated by JavaScript -->
+        </div>
+
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN VIEWPORT -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+
+    <!-- ACTIVE PERSPECTIVE ALERT BANNER -->
+    <div id="roleAlertBanner" class="bg-slate-900/90 border border-slate-800 rounded-xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-md">
+      <div class="flex items-center gap-3">
+        <div id="roleBannerAvatar" class="w-10 h-10 rounded-lg bg-emerald-900/50 text-emerald-400 flex items-center justify-center font-bold text-lg border border-emerald-700/50">
+          N
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Viewing Perspective as:</span>
+            <h2 id="roleBannerName" class="text-sm font-bold text-white">ALO Nurse (Clinical Triage & Interpreter)</h2>
+          </div>
+          <p id="roleBannerDesc" class="text-xs text-slate-400 mt-0.5">
+            Audits file completeness, compiles bilingual clinical summary, flags corrupted DICOM/PDF scans.
+          </p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 shrink-0">
+        <span class="text-xs text-slate-400">View Mode:</span>
+        <button onclick="setViewFilter('all')" id="btnViewAll" class="px-2.5 py-1 text-xs font-medium rounded-md bg-emerald-600 text-white">All 9 Stages</button>
+        <button onclick="setViewFilter('active')" id="btnViewActive" class="px-2.5 py-1 text-xs font-medium rounded-md bg-slate-800 text-slate-400 hover:text-white">Active Stage Only</button>
+      </div>
+    </div>
+
+    <!-- HORIZONTAL FLOW STEPPER RIBBON -->
+    <div class="bg-slate-900/70 border border-slate-800 rounded-xl p-3 shadow-inner overflow-x-auto">
+      <div class="flex items-center min-w-[760px] justify-between relative" id="stepperRibbon">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+
+    <!-- STAGES CONTAINER (ALL 9 STAGES ON ONE PAGE) -->
+    <div class="space-y-4" id="stagesContainer">
+      <!-- 9 Interactive Stage Cards dynamically generated and updated -->
+    </div>
+
+  </main>
+
+  <!-- TIMELINE & FLOW PATH DRAWER (SLIDE OVER) -->
+  <div id="timelineDrawer" class="fixed inset-y-0 right-0 w-full sm:w-96 bg-slate-900 border-l border-slate-800 shadow-2xl z-50 transform translate-x-full transition-transform duration-300 ease-in-out flex flex-col">
+    <div class="p-4 border-b border-slate-800 flex items-center justify-between bg-slate-950">
+      <div class="flex items-center gap-2">
+        <i class="fa-solid fa-clock-rotate-left text-emerald-400"></i>
+        <h3 class="font-bold text-sm text-white">Audit Flow Path & Timeline</h3>
+      </div>
+      <button onclick="toggleTimelineDrawer()" class="text-slate-400 hover:text-white p-1">
+        <i class="fa-solid fa-xmark text-lg"></i>
+      </button>
+    </div>
+
+    <!-- Live Event Feed -->
+    <div class="flex-1 overflow-y-auto p-4 space-y-4 text-xs" id="timelineList">
+      <!-- Injected by JS -->
+    </div>
+
+    <!-- Drawer Footer -->
+    <div class="p-3 border-t border-slate-800 bg-slate-950 text-center">
+      <span class="text-[11px] text-slate-500">100% In-Kingdom Data Sovereignty & Audit Trail</span>
+    </div>
+  </div>
+
+  <!-- WHATSAPP NOTIFICATION MODAL TOAST -->
+  <div id="whatsappToast" class="fixed bottom-5 left-5 z-50 max-w-sm bg-slate-900 border border-emerald-500/50 rounded-xl p-4 shadow-2xl transform translate-y-32 transition-transform duration-300 ease-out flex items-start gap-3">
+    <div class="w-8 h-8 rounded-full bg-emerald-500 flex items-center justify-center text-white shrink-0 mt-0.5">
+      <i class="fa-brands fa-whatsapp text-lg"></i>
+    </div>
+    <div class="flex-1">
+      <div class="flex items-center justify-between">
+        <span class="text-[10px] font-bold text-emerald-400 uppercase tracking-wider" id="toastMetaCode">W02: Case Received</span>
+        <span class="text-[10px] text-slate-500">Just now</span>
+      </div>
+      <p class="text-xs text-slate-200 mt-1" id="toastBody">
+        WhatsApp notification dispatched to patient (+966 50•••) with signed magic link.
+      </p>
+    </div>
+  </div>
+
+  <!-- JAVASCRIPT STATE ENGINE & INTERACTIVE LOGIC -->
+  <script>
+    // 11 SYSTEM ROLES SPECIFICATION
+    const ROLES = [
+      { code: 'P', name: 'Patient', arabic: 'المريض', color: 'bg-blue-600', text: 'text-blue-400', desc: 'Submits intake, uploads scans, pays invoice, attends video consultation.' },
+      { code: 'N', name: 'ALO Nurse', arabic: 'ممرض ألو', color: 'bg-emerald-600', text: 'text-emerald-400', desc: 'Audits file completeness, compiles bilingual clinical summary, live translator.' },
+      { code: 'D', name: 'Saudi Doctor', arabic: 'الطبيب السعودي', color: 'bg-purple-600', text: 'text-purple-400', desc: 'Reviews case, selects Indian Consultant, authors 2 clinical focus questions.' },
+      { code: 'C', name: 'ALO Coordinator', arabic: 'منسق الحالة', color: 'bg-amber-600', text: 'text-amber-400', desc: 'Timezone sync (KSA UTC+3 vs IST UTC+5:30), verifies payment, audits translations.' },
+      { code: 'K', name: 'Indian Consultant', arabic: 'الاستشاري العالمي', color: 'bg-cyan-600', text: 'text-cyan-400', desc: 'Super-specialist at KIMS/Aster. Reviews de-identified scans, submits written opinion.' },
+      { code: 'L', name: 'Lab Tech', arabic: 'أخصائي المختبر', color: 'bg-rose-600', text: 'text-rose-400', desc: 'Receives pathology orders, dispatches phlebotomist, uploads results.' },
+      { code: 'H', name: 'Pharmacist', arabic: 'الصيدلي', color: 'bg-teal-600', text: 'text-teal-400', desc: 'Fulfills e-prescriptions, coordinates generic drug substitution (X20).' },
+      { code: 'T', name: 'Physiotherapist', arabic: 'أخصائي العلاج الطبيعي', color: 'bg-indigo-600', text: 'text-indigo-400', desc: 'Schedules physical therapy regimens in-clinic or home visits.' },
+      { code: 'V', name: 'Home Nurse Tech', arabic: 'تمريض منزلي', color: 'bg-lime-600', text: 'text-lime-400', desc: 'Mobile clinician dispatched to patient home (vitals, injections, wound care).' },
+      { code: 'HA', name: 'Hospital Admin', arabic: 'مدير المستشفى', color: 'bg-orange-600', text: 'text-orange-400', desc: 'Partner hospital administrator managing staff, catalogs, and slot templates.' },
+      { code: 'AD', name: 'Super Admin', arabic: 'المشرف العام', color: 'bg-red-600', text: 'text-red-400', desc: 'Master platform owner with universal override and global audit rights.' }
+    ];
+
+    // 9 MASTER STAGES WITH MANDATORY PRE-CONDITION CHECKLISTS
+    const STAGES = [
+      {
+        id: 'STAGE_1',
+        code: 'S01',
+        title: 'Intake & Registration',
+        arabic: 'استلام الحالة وتسجيل المريض',
+        ownerRole: 'P',
+        sla: 'Instant',
+        whatsappTemplate: 'W02: Case Received Confirmation',
+        conditions: [
+          { id: 'c1_1', textEn: 'Saudi National ID / Iqama verified via 4-digit SMS OTP (P02-P03)', textAr: 'التحقق من الهوية الوطنية/الإقامة عبر رمز التحقق', required: true, completed: true },
+          { id: 'c1_2', textEn: 'Patient demographics, city (Riyadh) and primary symptoms entered (P04)', textAr: 'إدخال البيانات الديموغرافية والمدينة والأعراض', required: true, completed: true },
+          { id: 'c1_3', textEn: 'Diagnostic scans & pathology reports attached (DICOM / PDF / Echo) (P06)', textAr: 'إرفاق التقارير الطبية والأشعة', required: true, completed: true },
+          { id: 'c1_4', textEn: 'Consultation modality selected (Video Call + Written Opinion) (P05)', textAr: 'تحديد نوع الاستشارة المطلوبة (مرئي + مكتوب)', required: true, completed: true }
+        ],
+        exception: { code: 'X06', label: 'Emergency triage filter (Trigger 997 protocol)' }
+      },
+      {
+        id: 'STAGE_2',
+        code: 'S02',
+        title: 'Nurse Triage & File Integrity Check',
+        arabic: 'فرز التمريض والتحقق من سلامة الملفات',
+        ownerRole: 'N',
+        sla: '4 Hours',
+        whatsappTemplate: 'W04: Files Verified Complete',
+        conditions: [
+          { id: 'c2_1', textEn: 'Audit medical scans (DICOM slices intact, report readability verified) (N02)', textAr: 'فحص جودة الأشعة والملفات الطبية والتأكد من وضوحها', required: true, completed: true },
+          { id: 'c2_2', textEn: 'Verify patient consent signed digitally via WhatsApp link (W01/N03)', textAr: 'التحقق من توقيع نموذج الموافقة الطبية إلكترونياً', required: true, completed: true },
+          { id: 'c2_3', textEn: 'Compile bilingual clinical intake summary note for Saudi Doctor (N04)', textAr: 'إعداد الملخص السريري المزدوج للطبيب المعالج', required: true, completed: false },
+          { id: 'c2_4', textEn: 'Triage priority classification tagged (Priority: High - Valve Surgery) (N05)', textAr: 'تصنيف أولوية الحالة والفرز السريري', required: true, completed: false }
+        ],
+        exception: { code: 'X05', label: 'Missing scan -> Trigger WhatsApp W03 re-upload' }
+      },
+      {
+        id: 'STAGE_3',
+        code: 'S03',
+        title: 'Saudi Treating Doctor Review',
+        arabic: 'مراجعة الطبيب السعودي المعالج',
+        ownerRole: 'D',
+        sla: '24 Hours',
+        whatsappTemplate: 'W05: Second Opinion Approved & Invoice Ready',
+        conditions: [
+          { id: 'c3_1', textEn: 'Review clinical intake summary and approve medical rationale (D02)', textAr: 'مراجعة الملخص السريري واعتماد مبرر الاستشارة', required: true, completed: false },
+          { id: 'c3_2', textEn: 'Select Indian Super-Specialist Consultant (Dr. Arjun, KIMS Cardiology) (D04)', textAr: 'اختيار الاستشاري الهندي المتخصص من المستشفى الشريك', required: true, completed: false },
+          { id: 'c3_3', textEn: 'Author 2 mandatory clinical focus questions for international consultant (D03)', textAr: 'صياغة السؤالين السريريين الإلزاميين للاستشاري', required: true, completed: false },
+          { id: 'c3_4', textEn: 'Authorize case hand-off to payment invoicing queue (D05)', textAr: 'إحالة الحالة إلى مرحلة إصدار الفاتورة والسداد', required: true, completed: false }
+        ],
+        exception: { code: 'X09', label: 'Doctor review overdue (>24h) -> Reassign via Admin' }
+      },
+      {
+        id: 'STAGE_4',
+        code: 'S04',
+        title: 'Invoicing & Secure Payment Confirmation',
+        arabic: 'الفاتورة وتأكيد السداد الإلكتروني',
+        ownerRole: 'P',
+        sla: '48 Hours',
+        whatsappTemplate: 'W06: Payment Confirmed & Receipt Issued',
+        conditions: [
+          { id: 'c4_1', textEn: 'Generate official VAT-compliant invoice (Amount: 1,800 SAR + 15% VAT) (C04)', textAr: 'إصدار الفاتورة الضريبية المعتمدة وتفاصيل الرسوم', required: true, completed: false },
+          { id: 'c4_2', textEn: 'Patient opens Mada / Apple Pay / CC gateway sheet (/p/token/pay) (P19)', textAr: 'فتح بوابة الدفع عبر مدى أو أبل باي من قبل المريض', required: true, completed: false },
+          { id: 'c4_3', textEn: 'Payment webhook validates authorized transaction (P20)', textAr: 'تأكيد السداد بنجاح عبر الإشعار التلقائي للبوابة', required: true, completed: false },
+          { id: 'c4_4', textEn: 'Dispatch automated WhatsApp receipt and lock consultant appointment slot (P21)', textAr: 'إرسال سند القبض عبر الواتساب وتثبيت موعد الاستشاري', required: true, completed: false }
+        ],
+        exception: { code: 'X01', label: 'Card declined -> Retry link W05 dispatched' }
+      },
+      {
+        id: 'STAGE_5',
+        code: 'S05',
+        title: 'Global Consultant De-Identified Review',
+        arabic: 'مراجعة الاستشاري الدولي للملفات المشفرة',
+        ownerRole: 'K',
+        sla: '48 Hours',
+        whatsappTemplate: 'W07: Consultant Commenced Diagnostic Review',
+        conditions: [
+          { id: 'c5_1', textEn: 'Privacy Firewall check: All patient PII stripped; scans de-identified (K01)', textAr: 'حجب بيانات المريض الشخصية وتشفير صور الأشعة', required: true, completed: false },
+          { id: 'c5_2', textEn: 'Consultant accepts assignment within 48h SLA window (K03)', textAr: 'قبول الاستشاري للحالة ضمن نافذة اتفاقية مستوى الخدمة', required: true, completed: false },
+          { id: 'c5_3', textEn: 'Review Saudi Doctor 2 clinical questions & diagnostic scans (K04)', textAr: 'دراسة أسئلة الطبيب المعالج والملفات الطبية التخصصية', required: true, completed: false },
+          { id: 'c5_4', textEn: 'Confirm video consultation availability slot (Tue 5:00 PM KSA / 7:30 PM IST) (K05)', textAr: 'تأكيد موعد الجلسة المرئية بما يناسب توقيت السعودية والهند', required: true, completed: false }
+        ],
+        exception: { code: 'X10', label: 'Consultant overdue (>48h) -> Auto-route to backup' }
+      },
+      {
+        id: 'STAGE_6',
+        code: 'S06',
+        title: '3-Party Video Call & Second Opinion Synthesis',
+        arabic: 'المؤتمر المرئي الثلاثي وإصدار التقرير',
+        ownerRole: 'K',
+        sla: '24 Hours',
+        whatsappTemplate: 'W10: Stamped Second Opinion Ready for Download',
+        conditions: [
+          { id: 'c6_1', textEn: 'Conduct 3-Party WebRTC Conference (Patient, Saudi Dr, Indian Consultant, Nurse) (P23)', textAr: 'عقد المؤتمر المرئي المشترك بحضور المترجم الطبي', required: true, completed: false },
+          { id: 'c6_2', textEn: 'Consultant drafts structured English second opinion report (K08)', textAr: 'تحرير التقرير الطبي باللغة الإنجليزية من قبل الاستشاري', required: true, completed: false },
+          { id: 'c6_3', textEn: 'ALO Coordinator audits certified Arabic translation (C08)', textAr: 'تدقيق الترجمة العربية المعتمدة للتقرير الطبي', required: true, completed: false },
+          { id: 'c6_4', textEn: 'Compile and cryptographically stamp official Bilingual ALO PDF Report (P25)', textAr: 'اعتماد وختم التقرير الطبي النهائي ثنائي اللغة', required: true, completed: false }
+        ],
+        exception: { code: 'X16', label: 'Call disconnect -> Audio bridge / written fallback' }
+      },
+      {
+        id: 'STAGE_7',
+        code: 'S07',
+        title: 'Local Saudi Partner Ecosystem Referrals',
+        arabic: 'إحالات الشركاء المحليين (المختبر، الصيدلية، التمريض)',
+        ownerRole: 'D',
+        sla: '48 Hours',
+        whatsappTemplate: 'W11: Partner Referral Orders Ready to Book',
+        conditions: [
+          { id: 'c7_1', textEn: 'Saudi Doctor reviews second opinion and prescribes local follow-up orders (D09-D10)', textAr: 'اعتماد الطبيب السعودي للتوصيات وإصدار الإحالات', required: true, completed: false },
+          { id: 'c7_2', textEn: 'Lab referral routed to accredited hospital lab with phlebotomy dispatch (L01)', textAr: 'توجيه طلب التحاليل للمختبر المعتمد مع السحب المنزلي', required: true, completed: false },
+          { id: 'c7_3', textEn: 'E-Prescription transmitted to community pharmacy partner with generic options (H01)', textAr: 'إرسال الوصفة الإلكترونية للصيدلية الشريكة مع خيارات البدائل', required: true, completed: false },
+          { id: 'c7_4', textEn: 'Physiotherapy or Home Nursing care plan scheduled if indicated (T01/V01)', textAr: 'جدولة جلسات العلاج الطبيعي أو التمريض المنزلي', required: true, completed: false }
+        ],
+        exception: { code: 'X20', label: 'Drug out of stock -> Pharmacist generic substitution' }
+      },
+      {
+        id: 'STAGE_8',
+        code: 'S08',
+        title: '21-Day Connected Care & Clarification Window',
+        arabic: 'نافذة المتابعة الطبية الممتدة لمدة 21 يوماً',
+        ownerRole: 'P',
+        sla: '21 Days',
+        whatsappTemplate: 'W17: Doctor/Nurse Replied in Follow-up Chat',
+        conditions: [
+          { id: 'c8_1', textEn: '21-Day direct secure messaging portal enabled for patient inquiries (P27)', textAr: 'تفعيل قناة المحادثة المباشرة للاستفسارات الطبية لمدة 21 يوماً', required: true, completed: false },
+          { id: 'c8_2', textEn: 'ALO Nurse triages medication tolerance and test results updates (P28)', textAr: 'متابعة الممرض للاستجابة العلاجية ونتائج التحاليل', required: true, completed: false },
+          { id: 'c8_3', textEn: 'Saudi Doctor answers clarification queries on second opinion plan (D11)', textAr: 'إجابة الطبيب المعالج على أي استفسارات توضيحية', required: true, completed: false },
+          { id: 'c8_4', textEn: 'Patient confirms completion of partner lab and medication regimen', textAr: 'تأكيد المريض لاستلام الأدوية وإجراء الفحوصات المقررة', required: true, completed: false }
+        ],
+        exception: { code: 'X19', label: 'Follow-up closing reminder dispatched (W19)' }
+      },
+      {
+        id: 'STAGE_9',
+        code: 'S09',
+        title: 'Case Closure & Quality Audit',
+        arabic: 'إغلاق الحالة وتقييم الجودة والخدمة',
+        ownerRole: 'AD',
+        sla: 'Terminal',
+        whatsappTemplate: 'W20: Case Closed & Experience Survey',
+        conditions: [
+          { id: 'c9_1', textEn: '21-day communication window successfully elapsed without open flags', textAr: 'انقضاء فترة المتابعة الـ 21 يوماً دون ملاحظات معلقة', required: true, completed: false },
+          { id: 'c9_2', textEn: 'Medical records and audit logs securely encrypted and archived in KSA', textAr: 'أرشفة وتشفير السجلات الطبية داخل خوادم المملكة', required: true, completed: false },
+          { id: 'c9_3', textEn: 'Send automated 5-Star patient satisfaction survey via WhatsApp W20 (P30)', textAr: 'إرسال استبيان الرضا والتقييم عبر رسالة واتساب W20', required: true, completed: false },
+          { id: 'c9_4', textEn: 'Case status locked; permanent read-only access retained for patient', textAr: 'قفل التعديلات والاحتفاظ بحق الاطلاع الدائم للمريض', required: true, completed: false }
+        ],
+        exception: { code: 'X07', label: 'Archival report generated for Ministry of Health audit' }
+      }
+    ];
+
+    // APPLICATION STATE
+    let state = {
+      activeRole: 'N', // Default view: ALO Nurse
+      currentStageIndex: 1, // Stage 2: NURSE_CHECK is active initially
+      viewFilter: 'all', // 'all' or 'active'
+      timeline: [
+        { time: '10:14 AM', role: 'P', text: 'Case ALO-2026-9812 created via WhatsApp Bot' },
+        { time: '10:15 AM', role: 'P', text: 'Saudi National ID & SMS OTP successfully verified' },
+        { time: '10:18 AM', role: 'P', text: 'Diagnostic MRI and Echocardiogram uploaded (DICOM format)' },
+        { time: '10:20 AM', role: 'System', text: 'Stage 1 Intake Submitted. Handed off to ALO Nurse. WhatsApp W02 dispatched.' }
+      ]
+    };
+
+    // RENDER ROLE SWITCHER BUTTONS
+    function renderRoleSwitcher() {
+      const container = document.getElementById('rolePillsContainer');
+      container.innerHTML = ROLES.map(role => {
+        const isSelected = role.code === state.activeRole;
+        return `
+          <button 
+            onclick="switchRole('${role.code}')" 
+            title="${role.name} (${role.arabic}) - ${role.desc}"
+            class="px-2.5 py-1 rounded-lg text-xs font-semibold shrink-0 transition flex items-center gap-1.5 border ${
+              isSelected 
+                ? `${role.color} text-white border-white/30 shadow-md ring-2 ring-emerald-500/50` 
+                : 'bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700'
+            }">
+            <span class="w-4 h-4 rounded text-[10px] flex items-center justify-center font-bold bg-black/25">
+              ${role.code}
+            </span>
+            <span>${role.name}</span>
+          </button>
+        `;
+      }).join('');
+
+      // Update Top Banner
+      const currentRoleObj = ROLES.find(r => r.code === state.activeRole) || ROLES[1];
+      document.getElementById('roleBannerAvatar').textContent = currentRoleObj.code;
+      document.getElementById('roleBannerAvatar').className = `w-10 h-10 rounded-lg ${currentRoleObj.color} text-white flex items-center justify-center font-bold text-lg border border-white/20 shadow`;
+      document.getElementById('roleBannerName').textContent = `${currentRoleObj.name} (${currentRoleObj.arabic})`;
+      document.getElementById('roleBannerDesc').textContent = currentRoleObj.desc;
+    }
+
+    // SWITCH ROLE
+    function switchRole(roleCode) {
+      state.activeRole = roleCode;
+      renderRoleSwitcher();
+      renderStages();
+      showToast(`Switched view perspective to: ${ROLES.find(r=>r.code===roleCode)?.name}`);
+    }
+
+    // RENDER HORIZONTAL STEPPER
+    function renderStepper() {
+      const ribbon = document.getElementById('stepperRibbon');
+      ribbon.innerHTML = STAGES.map((stage, idx) => {
+        const isPassed = idx < state.currentStageIndex;
+        const isCurrent = idx === state.currentStageIndex;
+        const isFuture = idx > state.currentStageIndex;
+        
+        let badgeClass = 'bg-slate-800 text-slate-400 border-slate-700';
+        let lineClass = 'bg-slate-800';
+        if (isPassed) {
+          badgeClass = 'bg-emerald-600 text-white border-emerald-500 shadow-sm';
+          lineClass = 'bg-emerald-600';
+        } else if (isCurrent) {
+          badgeClass = 'bg-amber-500 text-slate-950 font-bold border-amber-300 pulse-ring';
+          lineClass = 'bg-slate-800';
+        }
+
+        return `
+          <div class="flex items-center gap-2">
+            <div class="flex flex-col items-center cursor-pointer" onclick="scrollToStage(${idx})">
+              <div class="w-8 h-8 rounded-full border flex items-center justify-center text-xs font-bold ${badgeClass}">
+                ${isPassed ? '<i class="fa-solid fa-check"></i>' : idx + 1}
+              </div>
+              <span class="text-[10px] mt-1 font-medium ${isCurrent ? 'text-amber-400 font-bold' : isPassed ? 'text-emerald-400' : 'text-slate-500'} truncate max-w-[80px] text-center">
+                ${stage.title.split(' ')[0]}
+              </span>
+            </div>
+            ${idx < STAGES.length - 1 ? `<div class="h-0.5 w-6 sm:w-10 ${isPassed ? 'bg-emerald-600' : 'bg-slate-800'}"></div>` : ''}
+          </div>
+        `;
+      }).join('');
+    }
+
+    // RENDER ALL 9 STAGES
+    function renderStages() {
+      const container = document.getElementById('stagesContainer');
+      const filteredStages = STAGES.filter((stage, idx) => {
+        if (state.viewFilter === 'active') {
+          return idx === state.currentStageIndex;
+        }
+        return true;
+      });
+
+      container.innerHTML = filteredStages.map((stage, stageIdx) => {
+        const actualIdx = STAGES.findIndex(s => s.id === stage.id);
+        const isPassed = actualIdx < state.currentStageIndex;
+        const isCurrent = actualIdx === state.currentStageIndex;
+        const isFuture = actualIdx > state.currentStageIndex;
+
+        // Permissions Check
+        const isOwner = state.activeRole === stage.ownerRole;
+        const isAdmin = state.activeRole === 'AD' || state.activeRole === 'C';
+        const canAct = (isOwner || isAdmin) && isCurrent;
+
+        const roleObj = ROLES.find(r => r.code === stage.ownerRole) || ROLES[0];
+        const allCompleted = stage.conditions.every(c => c.completed);
+        const completedCount = stage.conditions.filter(c => c.completed).length;
+
+        // Dynamic Border & Header Styling
+        let cardBorder = 'border-slate-800 bg-slate-900/60';
+        let statusBadge = `<span class="px-2 py-0.5 text-[11px] rounded bg-slate-800 text-slate-400 border border-slate-700">Pending</span>`;
+        
+        if (isPassed) {
+          cardBorder = 'border-emerald-800/60 bg-emerald-950/20';
+          statusBadge = `<span class="px-2 py-0.5 text-[11px] rounded bg-emerald-900/40 text-emerald-300 border border-emerald-700/50 flex items-center gap-1"><i class="fa-solid fa-check text-xs"></i> Completed</span>`;
+        } else if (isCurrent) {
+          cardBorder = 'border-amber-500/60 bg-slate-900 shadow-xl shadow-amber-950/20 ring-1 ring-amber-500/30';
+          statusBadge = `<span class="px-2 py-0.5 text-[11px] rounded bg-amber-500/20 text-amber-300 border border-amber-500/40 flex items-center gap-1 font-semibold animate-pulse"><i class="fa-solid fa-circle-dot text-[9px]"></i> Active Stage</span>`;
+        }
+
+        return `
+          <div id="stageCard_${actualIdx}" class="rounded-xl border ${cardBorder} p-5 transition-all duration-200">
+            
+            <!-- STAGE HEADER -->
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-slate-800/80 pb-3">
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg ${isPassed ? 'bg-emerald-600' : isCurrent ? 'bg-amber-500 text-slate-950' : 'bg-slate-800 text-slate-400'} flex items-center justify-center font-bold text-sm shrink-0">
+                  ${isPassed ? '<i class="fa-solid fa-check text-white"></i>' : stage.code}
+                </div>
+                <div>
+                  <div class="flex items-center gap-2">
+                    <h3 class="font-bold text-base text-white">${stage.title}</h3>
+                    <span class="text-xs text-slate-400 font-normal font-sans" dir="rtl">${stage.arabic}</span>
+                  </div>
+                  <div class="flex items-center gap-2 mt-1">
+                    <span class="text-xs text-slate-400 flex items-center gap-1">
+                      Assigned Role: 
+                      <span class="font-semibold px-1.5 py-0.2 rounded text-[11px] ${roleObj.color} text-white">${roleObj.name} (${stage.ownerRole})</span>
+                    </span>
+                    <span class="text-slate-600">•</span>
+                    <span class="text-xs text-slate-400">SLA: <span class="font-medium text-slate-300">${stage.sla}</span></span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Header Status & Progress -->
+              <div class="flex items-center gap-3 shrink-0">
+                <div class="text-right">
+                  <span class="text-[11px] text-slate-400 block">Checklist Progress</span>
+                  <span class="text-xs font-mono font-semibold ${allCompleted ? 'text-emerald-400' : 'text-slate-300'}">
+                    ${completedCount}/${stage.conditions.length} Verified
+                  </span>
+                </div>
+                ${statusBadge}
+              </div>
+            </div>
+
+            <!-- CHECKLIST GATES (CRITICAL REQUIREMENT) -->
+            <div class="mt-4 space-y-2.5">
+              <div class="flex items-center justify-between text-xs text-slate-400 font-semibold mb-1">
+                <span>STAGE PREREQUISITES & EXIT CONDITIONS</span>
+                <span>${canAct ? '<span class="text-emerald-400 text-[11px]"><i class="fa-solid fa-pen"></i> You have action rights</span>' : '<span class="text-slate-500 text-[11px]"><i class="fa-solid fa-lock"></i> Switch role to edit</span>'}</span>
+              </div>
+
+              ${stage.conditions.map((cond, cIdx) => {
+                const isChecked = cond.completed;
+                return `
+                  <div class="flex items-start gap-3 p-2.5 rounded-lg border transition ${
+                    isChecked 
+                      ? 'bg-emerald-950/20 border-emerald-800/40 text-slate-200' 
+                      : 'bg-slate-950/40 border-slate-800 text-slate-300 hover:border-slate-700'
+                  }">
+                    
+                    <div class="pt-0.5">
+                      <input 
+                        type="checkbox" 
+                        id="chk_${actualIdx}_${cIdx}" 
+                        ${isChecked ? 'checked' : ''} 
+                        ${!canAct ? 'disabled' : ''}
+                        onchange="toggleCondition(${actualIdx}, ${cIdx})" 
+                        class="w-4 h-4 rounded border-slate-700 text-emerald-600 focus:ring-emerald-500 bg-slate-900 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed">
+                    </div>
+
+                    <label for="chk_${actualIdx}_${cIdx}" class="flex-1 text-xs cursor-pointer ${!canAct ? 'cursor-not-allowed' : ''}">
+                      <div class="flex items-center justify-between gap-2">
+                        <span class="font-medium ${isChecked ? 'line-through text-slate-400' : 'text-slate-200'}">
+                          ${cond.textEn}
+                        </span>
+                        ${cond.required ? '<span class="text-[10px] uppercase font-bold px-1 rounded bg-rose-500/20 text-rose-300 border border-rose-500/30 shrink-0">Required</span>' : ''}
+                      </div>
+                      <span class="block text-[11px] text-slate-500 mt-0.5" dir="rtl">${cond.textAr}</span>
+                    </label>
+
+                  </div>
+                `;
+              }).join('')}
+            </div>
+
+            <!-- ACTION FOOTER & HAND-OFF CONTROLS -->
+            <div class="mt-4 pt-3 border-t border-slate-800/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+              
+              <!-- Exception path trigger simulation -->
+              <div class="flex items-center gap-2">
+                <span class="text-[11px] text-slate-500 font-mono">Edge Path:</span>
+                <button 
+                  onclick="triggerException('${stage.exception.code}', '${stage.exception.label}')"
+                  class="text-[11px] px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-amber-300 border border-slate-700 flex items-center gap-1.5 transition">
+                  <i class="fa-solid fa-triangle-exclamation text-amber-400"></i>
+                  <span>${stage.exception.code}: ${stage.exception.label}</span>
+                </button>
+              </div>
+
+              <!-- Main Submission Button -->
+              <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
+                ${isCurrent ? `
+                  <button 
+                    onclick="submitStage(${actualIdx})"
+                    ${!allCompleted || !canAct ? 'disabled' : ''}
+                    class="w-full sm:w-auto px-4 py-2 text-xs font-bold rounded-lg transition shadow-lg flex items-center justify-center gap-2 ${
+                      allCompleted && canAct
+                        ? 'bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 text-white shadow-emerald-900/50 cursor-pointer animate-pulse'
+                        : 'bg-slate-800 text-slate-500 border border-slate-700 cursor-not-allowed opacity-60'
+                    }">
+                    <i class="fa-solid fa-circle-check"></i>
+                    <span>Verify & Hand-Off to Next Stage</span>
+                    <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                  </button>
+                ` : isPassed ? `
+                  <span class="text-xs text-emerald-400 flex items-center gap-1">
+                    <i class="fa-solid fa-check-double"></i> Stage Completed & Handed Off
+                  </span>
+                ` : `
+                  <span class="text-xs text-slate-500 flex items-center gap-1">
+                    <i class="fa-solid fa-hourglass-start"></i> Waiting for preceding stage hand-off
+                  </span>
+                `}
+              </div>
+
+            </div>
+
+          </div>
+        `;
+      }).join('');
+    }
+
+    // TOGGLE CHECKBOX CONDITION
+    function toggleCondition(stageIdx, condIdx) {
+      const stage = STAGES[stageIdx];
+      const cond = stage.conditions[condIdx];
+      cond.completed = !cond.completed;
+
+      // Add timeline event
+      const actionText = cond.completed ? 'Checked' : 'Unchecked';
+      addTimelineEntry(state.activeRole, `${actionText} "${cond.textEn.substring(0, 45)}..." in ${stage.code}`);
+
+      renderStages();
+      renderStepper();
+    }
+
+    // SUBMIT & HAND-OFF TO NEXT STAGE
+    function submitStage(stageIdx) {
+      const currentStage = STAGES[stageIdx];
+      
+      // Verification check
+      const pendingRequired = currentStage.conditions.filter(c => c.required && !c.completed);
+      if (pendingRequired.length > 0) {
+        alert('Cannot advance: Please complete all mandatory conditions first.');
+        return;
+      }
+
+      if (stageIdx < STAGES.length - 1) {
+        state.currentStageIndex = stageIdx + 1;
+        const nextStage = STAGES[state.currentStageIndex];
+        
+        // Log to timeline
+        addTimelineEntry(
+          state.activeRole, 
+          `Stage Completed: ${currentStage.title} -> Handed off to ${nextStage.ownerRole} (${nextStage.title})`
+        );
+        addTimelineEntry(
+          'WhatsApp API', 
+          `Dispatched ${currentStage.whatsappTemplate} to Patient & Next Role`
+        );
+
+        // Show toast
+        showToast(currentStage.whatsappTemplate);
+
+        // Auto-switch to next role for user convenience
+        state.activeRole = nextStage.ownerRole;
+
+        renderRoleSwitcher();
+        renderStepper();
+        renderStages();
+
+        // Scroll to next stage
+        setTimeout(() => {
+          scrollToStage(state.currentStageIndex);
+        }, 150);
+
+      } else {
+        // Final stage reached
+        addTimelineEntry(state.activeRole, 'Case ALO-2026-9812 has been officially CLOSED & ARCHIVED.');
+        showToast('W20: Case Closed & Experience Survey Dispatched');
+        renderStages();
+        renderStepper();
+      }
+    }
+
+    // EXCEPTION TRIGGER
+    function triggerException(code, label) {
+      addTimelineEntry('Exception', `Alert [${code}]: ${label}`);
+      showToast(`⚠️ Exception [${code}] Triggered: ${label}`);
+    }
+
+    // TIMELINE HELPERS
+    function addTimelineEntry(role, text) {
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      state.timeline.unshift({ time: timeStr, role, text });
+      renderTimeline();
+    }
+
+    function renderTimeline() {
+      const list = document.getElementById('timelineList');
+      document.getElementById('timelineCountBadge').textContent = state.timeline.length;
+
+      list.innerHTML = state.timeline.map(entry => {
+        const roleObj = ROLES.find(r => r.code === entry.role) || { color: 'bg-slate-700', text: 'text-slate-300' };
+        return `
+          <div class="relative pl-6 pb-4 border-l-2 border-slate-800 last:border-transparent">
+            <div class="absolute -left-1.5 top-0 w-3 h-3 rounded-full ${roleObj.color} border-2 border-slate-900"></div>
+            <div class="flex items-center justify-between text-[10px] text-slate-500 mb-0.5">
+              <span class="font-bold uppercase ${roleObj.text}">[${entry.role}]</span>
+              <span>${entry.time}</span>
+            </div>
+            <p class="text-xs text-slate-300 font-mono">${entry.text}</p>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function toggleTimelineDrawer() {
+      const drawer = document.getElementById('timelineDrawer');
+      drawer.classList.toggle('translate-x-full');
+    }
+
+    // TOAST NOTIFIER
+    function showToast(message) {
+      const toast = document.getElementById('whatsappToast');
+      document.getElementById('toastBody').textContent = message;
+      toast.classList.remove('translate-y-32');
+      setTimeout(() => {
+        toast.classList.add('translate-y-32');
+      }, 4000);
+    }
+
+    // SCROLL UTILITY
+    function scrollToStage(idx) {
+      const el = document.getElementById(`stageCard_${idx}`);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
+
+    // VIEW FILTER TOGGLE
+    function setViewFilter(mode) {
+      state.viewFilter = mode;
+      document.getElementById('btnViewAll').className = mode === 'all' 
+        ? 'px-2.5 py-1 text-xs font-medium rounded-md bg-emerald-600 text-white' 
+        : 'px-2.5 py-1 text-xs font-medium rounded-md bg-slate-800 text-slate-400 hover:text-white';
+      
+      document.getElementById('btnViewActive').className = mode === 'active' 
+        ? 'px-2.5 py-1 text-xs font-medium rounded-md bg-emerald-600 text-white' 
+        : 'px-2.5 py-1 text-xs font-medium rounded-md bg-slate-800 text-slate-400 hover:text-white';
+      
+      renderStages();
+    }
+
+    // RESET FLOW
+    function resetFlow() {
+      if (confirm('Reset entire flow back to Stage 1?')) {
+        state.currentStageIndex = 0;
+        state.activeRole = 'P';
+        STAGES.forEach((stage, idx) => {
+          stage.conditions.forEach(c => {
+            c.completed = (idx === 0); // Stage 1 conditions initially completed
+          });
+        });
+        state.timeline = [
+          { time: '10:00 AM', role: 'System', text: 'Flow initialized. Waiting for Patient intake submission.' }
+        ];
+        renderRoleSwitcher();
+        renderStepper();
+        renderStages();
+        renderTimeline();
+        showToast('Flow reset to Stage 1');
+      }
+    }
+
+    // INITIALIZATION
+    window.onload = () => {
+      renderRoleSwitcher();
+      renderStepper();
+      renderStages();
+      renderTimeline();
+    };
+  </script>
+</body>
+</html>
