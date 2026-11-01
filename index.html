@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr" class="h-full bg-slate-950 text-slate-100">
+<html lang="en" dir="ltr" class="h-full bg-[#081324] text-slate-100">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,17 +12,19 @@
       theme: {
         extend: {
           colors: {
-            brand: {
-              50: '#f0fdf4',
-              100: '#dcfce7',
-              500: '#22c55e',
-              600: '#16a34a',
-              700: '#15803d',
-              800: '#166534',
-              900: '#14532d',
-            },
-            saudi: '#006C35',
-            accent: '#0284c7'
+            alo: {
+              navy: '#0E2340',       /* Official PDF Deep Navy */
+              deep: '#081324',       /* Dark Canvas */
+              card: '#122B4D',       /* Official Card Navy */
+              border: '#1E3E6B',     /* Official Structural Border */
+              teal: '#12806F',       /* Official Signature Saudi Teal */
+              tealHover: '#0E685A',
+              mint: '#4ED0C4',       /* Official Bright Mint Highlight */
+              wash: '#E9F6F2',       /* Official Soft Mint Wash */
+              sand: '#F5F1EB',       /* Official Editorial Canvas */
+              amber: '#D97706',      /* Exception Warning */
+              rose: '#BE123C',       /* Cancellation & Alert */
+            }
           },
           animation: {
             'pulse-fast': 'pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite',
@@ -59,22 +61,22 @@
     }
   </style>
 </head>
-<body class="min-h-full flex flex-col font-sans antialiased text-slate-200 bg-slate-950 selection:bg-emerald-500 selection:text-white">
+<body class="min-h-full flex flex-col font-sans antialiased text-slate-200 bg-[#081324] selection:bg-[#12806F] selection:text-white">
 
   <!-- TOP APP HEADER -->
-  <header class="sticky top-0 z-50 bg-slate-900/90 backdrop-blur-md border-b border-slate-800/80 shadow-2xl">
+  <header class="sticky top-0 z-50 bg-[#0E2340]/90 backdrop-blur-md border-b border-[#1E3E6B]/80 shadow-2xl">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2.5">
       <div class="flex items-center justify-between gap-4">
         
         <!-- Brand & Case Details -->
         <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-600 via-emerald-500 to-teal-400 flex items-center justify-center font-bold text-white shadow-lg shadow-emerald-950/60 text-xl border border-emerald-400/30">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#0E2340] via-[#12806F] to-[#4ED0C4] flex items-center justify-center font-bold text-white shadow-lg shadow-emerald-950/60 text-xl border border-[#4ED0C4]/30">
             ع
           </div>
           <div>
             <div class="flex items-center gap-2">
               <h1 class="text-base sm:text-lg font-black tracking-tight text-white flex items-center gap-2">
-                ALO DOCTOR <span class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 font-bold uppercase tracking-wider">KSA v2.4</span>
+                ALO DOCTOR <span class="text-[10px] px-2 py-0.5 rounded-full bg-[#12806F]/20 text-[#4ED0C4] border border-[#12806F]/40 font-bold uppercase tracking-wider">KSA v2.4</span>
               </h1>
             </div>
             <p class="text-[11px] text-slate-400">Connected Second Opinion & Partner Ecosystem</p>
@@ -82,10 +84,10 @@
         </div>
 
         <!-- Case Live Context Capsule -->
-        <div class="hidden lg:flex items-center gap-4 bg-slate-950/90 px-4 py-1.5 rounded-xl border border-slate-800 text-xs shadow-inner">
+        <div class="hidden lg:flex items-center gap-4 bg-[#081324]/90 px-4 py-1.5 rounded-xl border border-[#1E3E6B] text-xs shadow-inner">
           <div>
             <span class="text-slate-500 block text-[9px] uppercase tracking-wider font-semibold">Active Case</span>
-            <span class="font-mono font-bold text-emerald-400" id="currentCaseId">ALO-2026-9812</span>
+            <span class="font-mono font-bold text-[#4ED0C4]" id="currentCaseId">ALO-2026-9812</span>
           </div>
           <div class="h-6 w-px bg-slate-800"></div>
           <div>
@@ -106,14 +108,14 @@
 
         <!-- Utility Buttons -->
         <div class="flex items-center gap-2">
-          <button onclick="resetFlow()" title="Reset to Stage 1" class="px-2.5 py-1.5 text-xs bg-slate-800/80 hover:bg-slate-700 text-slate-300 rounded-lg border border-slate-700 transition flex items-center gap-1.5">
+          <button onclick="resetFlow()" title="Reset to Stage 1" class="px-2.5 py-1.5 text-xs bg-slate-800/80 hover:bg-slate-700 text-slate-300 rounded-lg border border-[#2A4D7D] transition flex items-center gap-1.5">
             <i class="fa-solid fa-arrow-rotate-left"></i>
             <span class="hidden sm:inline">Reset</span>
           </button>
-          <button onclick="toggleTimelineDrawer()" class="px-3 py-1.5 text-xs bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-lg shadow-lg shadow-emerald-950/50 transition flex items-center gap-1.5">
+          <button onclick="toggleTimelineDrawer()" class="px-3 py-1.5 text-xs bg-[#12806F] hover:bg-[#0E685A] text-white font-semibold rounded-lg shadow-lg shadow-emerald-950/50 transition flex items-center gap-1.5">
             <i class="fa-solid fa-clock-rotate-left"></i>
             <span>Audit Trail</span>
-            <span id="timelineCountBadge" class="bg-emerald-950 text-emerald-300 text-[10px] px-1.5 py-0.2 rounded-full font-bold">4</span>
+            <span id="timelineCountBadge" class="bg-[#061C18] text-[#7BE4DA] text-[10px] px-1.5 py-0.2 rounded-full font-bold">4</span>
           </button>
         </div>
 
@@ -121,12 +123,12 @@
     </div>
 
     <!-- ROLE SWITCHER BAR (11 ACTOR ROLES) -->
-    <div class="bg-slate-900/95 border-t border-slate-800/80 px-4 sm:px-6 lg:px-8 py-2">
+    <div class="bg-[#0E2340]/95 border-t border-[#1E3E6B]/80 px-4 sm:px-6 lg:px-8 py-2">
       <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-start md:items-center justify-between gap-2.5">
         
         <div class="flex items-center gap-2 shrink-0">
           <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
-            <i class="fa-solid fa-users text-emerald-400"></i> Role Switcher:
+            <i class="fa-solid fa-users text-[#4ED0C4]"></i> Role Switcher:
           </span>
           <span class="text-[10px] text-slate-500 hidden sm:inline">(Click badge to view role perspective)</span>
         </div>
@@ -141,7 +143,7 @@
   </header>
 
   <!-- AUTO-DEMO CONTROLLER BAR (STICKY MODERN DOCK) -->
-  <div class="sticky top-[102px] z-40 bg-gradient-to-r from-slate-900 via-slate-950 to-slate-900 border-b border-emerald-500/20 shadow-2xl backdrop-blur-md px-4 py-2.5">
+  <div class="sticky top-[102px] z-40 bg-gradient-to-r from-slate-900 via-slate-950 to-slate-900 border-b border-[#12806F]/20 shadow-2xl backdrop-blur-md px-4 py-2.5">
     <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
       
       <!-- Left: Demo Status & Play/Pause -->
@@ -151,7 +153,7 @@
           <button 
             id="btnAutoPlayToggle" 
             onclick="toggleAutoDemo()" 
-            class="px-4 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-2 shadow-lg bg-emerald-600 hover:bg-emerald-500 text-white shadow-emerald-950/60 ring-2 ring-emerald-400/30">
+            class="px-4 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-2 shadow-lg bg-[#12806F] hover:bg-[#0E685A] text-white shadow-emerald-950/60 ring-2 ring-emerald-400/30">
             <i id="autoPlayIcon" class="fa-solid fa-play"></i>
             <span id="autoPlayText">Run Auto-Demo</span>
           </button>
@@ -160,7 +162,7 @@
           <button 
             onclick="stepBackward()" 
             title="Move to Previous Stage (Left)" 
-            class="p-2 text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg border border-slate-700 transition flex items-center justify-center">
+            class="p-2 text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg border border-[#2A4D7D] transition flex items-center justify-center">
             <i class="fa-solid fa-backward-step"></i>
           </button>
 
@@ -168,13 +170,13 @@
           <button 
             onclick="stepForward()" 
             title="Move to Next Stage (Right)" 
-            class="p-2 text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg border border-slate-700 transition flex items-center justify-center">
+            class="p-2 text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg border border-[#2A4D7D] transition flex items-center justify-center">
             <i class="fa-solid fa-forward-step"></i>
           </button>
         </div>
 
         <!-- Stage Counter Capsule -->
-        <div class="flex items-center gap-1.5 bg-slate-900 px-3 py-1 rounded-lg border border-slate-800 text-xs">
+        <div class="flex items-center gap-1.5 bg-[#0E2340] px-3 py-1 rounded-lg border border-[#1E3E6B] text-xs">
           <span class="text-slate-400 text-[11px]">Step:</span>
           <span id="demoStepIndicator" class="font-bold text-amber-400 font-mono">Stage 2 of 9</span>
         </div>
@@ -184,7 +186,7 @@
       <div class="w-full sm:w-64 flex flex-col gap-1">
         <div class="flex items-center justify-between text-[10px] text-slate-400">
           <span>Auto-advance Countdown</span>
-          <span id="timerText" class="font-mono text-emerald-400 font-bold">Ready</span>
+          <span id="timerText" class="font-mono text-[#4ED0C4] font-bold">Ready</span>
         </div>
         <div class="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
           <div id="demoProgressBar" class="h-full bg-gradient-to-r from-emerald-500 to-teal-400 progress-bar-fill w-0"></div>
@@ -196,9 +198,9 @@
         <span class="text-[11px] text-slate-400 flex items-center gap-1">
           <i class="fa-solid fa-gauge-high text-cyan-400"></i> Speed:
         </span>
-        <div class="flex items-center bg-slate-900 rounded-lg border border-slate-800 p-0.5 text-xs font-mono">
+        <div class="flex items-center bg-[#0E2340] rounded-lg border border-[#1E3E6B] p-0.5 text-xs font-mono">
           <button onclick="setSpeed(5000)" id="spd5" class="px-2 py-0.5 rounded text-slate-400 hover:text-white transition">5s</button>
-          <button onclick="setSpeed(3000)" id="spd3" class="px-2 py-0.5 rounded bg-emerald-600 text-white font-bold transition">3s</button>
+          <button onclick="setSpeed(3000)" id="spd3" class="px-2 py-0.5 rounded bg-[#12806F] text-white font-bold transition">3s</button>
           <button onclick="setSpeed(1800)" id="spd2" class="px-2 py-0.5 rounded text-slate-400 hover:text-white transition">2s</button>
           <button onclick="setSpeed(1000)" id="spd1" class="px-2 py-0.5 rounded text-slate-400 hover:text-white transition">1s</button>
         </div>
@@ -211,19 +213,19 @@
   <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-5 space-y-5">
 
     <!-- LIVE ANIMATED NARRATION & CLINICAL EXPLANATION BANNER -->
-    <div id="narrationCard" class="bg-gradient-to-r from-slate-900 via-slate-900/95 to-slate-900 border border-emerald-500/30 rounded-2xl p-4 shadow-xl flex items-start gap-4 transition-all duration-300">
-      <div id="narrationRoleIcon" class="w-12 h-12 rounded-xl bg-emerald-600/30 text-emerald-400 flex items-center justify-center font-bold text-2xl border border-emerald-500/40 shrink-0 shadow-lg">
+    <div id="narrationCard" class="bg-gradient-to-r from-slate-900 via-slate-900/95 to-slate-900 border border-[#12806F]/30 rounded-2xl p-4 shadow-xl flex items-start gap-4 transition-all duration-300">
+      <div id="narrationRoleIcon" class="w-12 h-12 rounded-xl bg-[#12806F]/30 text-[#4ED0C4] flex items-center justify-center font-bold text-2xl border border-[#12806F]/40 shrink-0 shadow-lg">
         <i class="fa-solid fa-user-nurse"></i>
       </div>
       <div class="flex-1 space-y-1">
         <div class="flex flex-wrap items-center justify-between gap-2">
           <div class="flex items-center gap-2">
-            <span id="narrationBadge" class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+            <span id="narrationBadge" class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-[#12806F]/20 text-[#4ED0C4] border border-[#12806F]/30">
               Stage 2: NURSE_CHECK
             </span>
             <h2 id="narrationTitle" class="text-sm font-bold text-white">Nurse Sarah auditing medical file integrity</h2>
           </div>
-          <span id="narrationActionPill" class="text-[11px] font-mono text-cyan-400 bg-slate-950 px-2 py-0.5 rounded border border-slate-800">
+          <span id="narrationActionPill" class="text-[11px] font-mono text-cyan-400 bg-[#081324] px-2 py-0.5 rounded border border-[#1E3E6B]">
             Automating Checklist Conditions...
           </span>
         </div>
@@ -234,7 +236,7 @@
     </div>
 
     <!-- HORIZONTAL FLOW STEPPER RIBBON -->
-    <div class="bg-slate-900/60 border border-slate-800/80 rounded-xl p-3 shadow-inner overflow-x-auto">
+    <div class="bg-[#0E2340]/60 border border-[#1E3E6B]/80 rounded-xl p-3 shadow-inner overflow-x-auto">
       <div class="flex items-center min-w-[800px] justify-between relative" id="stepperRibbon">
         <!-- Rendered by JS -->
       </div>
@@ -248,10 +250,10 @@
   </main>
 
   <!-- TIMELINE & FLOW PATH DRAWER (SLIDE OVER) -->
-  <div id="timelineDrawer" class="fixed inset-y-0 right-0 w-full sm:w-96 bg-slate-900 border-l border-slate-800 shadow-2xl z-50 transform translate-x-full transition-transform duration-300 ease-in-out flex flex-col">
-    <div class="p-4 border-b border-slate-800 flex items-center justify-between bg-slate-950">
+  <div id="timelineDrawer" class="fixed inset-y-0 right-0 w-full sm:w-96 bg-[#0E2340] border-l border-[#1E3E6B] shadow-2xl z-50 transform translate-x-full transition-transform duration-300 ease-in-out flex flex-col">
+    <div class="p-4 border-b border-[#1E3E6B] flex items-center justify-between bg-[#081324]">
       <div class="flex items-center gap-2">
-        <i class="fa-solid fa-clock-rotate-left text-emerald-400"></i>
+        <i class="fa-solid fa-clock-rotate-left text-[#4ED0C4]"></i>
         <h3 class="font-bold text-sm text-white">Audit Flow Path & Timeline</h3>
       </div>
       <button onclick="toggleTimelineDrawer()" class="text-slate-400 hover:text-white p-1">
@@ -265,19 +267,19 @@
     </div>
 
     <!-- Drawer Footer -->
-    <div class="p-3 border-t border-slate-800 bg-slate-950 text-center">
+    <div class="p-3 border-t border-[#1E3E6B] bg-[#081324] text-center">
       <span class="text-[11px] text-slate-500">100% In-Kingdom Data Sovereignty & Audit Trail</span>
     </div>
   </div>
 
   <!-- WHATSAPP NOTIFICATION MODAL TOAST -->
-  <div id="whatsappToast" class="fixed bottom-5 left-5 z-50 max-w-sm bg-slate-900/95 backdrop-blur-md border border-emerald-500/50 rounded-2xl p-4 shadow-2xl transform translate-y-36 transition-transform duration-300 ease-out flex items-start gap-3">
-    <div class="w-9 h-9 rounded-full bg-emerald-500 flex items-center justify-center text-white shrink-0 mt-0.5 shadow-md shadow-emerald-950">
+  <div id="whatsappToast" class="fixed bottom-5 left-5 z-50 max-w-sm bg-[#0E2340]/95 backdrop-blur-md border border-[#12806F]/50 rounded-2xl p-4 shadow-2xl transform translate-y-36 transition-transform duration-300 ease-out flex items-start gap-3">
+    <div class="w-9 h-9 rounded-full bg-[#12806F] flex items-center justify-center text-white shrink-0 mt-0.5 shadow-md shadow-emerald-950">
       <i class="fa-brands fa-whatsapp text-xl"></i>
     </div>
     <div class="flex-1">
       <div class="flex items-center justify-between">
-        <span class="text-[10px] font-bold text-emerald-400 uppercase tracking-wider" id="toastMetaCode">W02: Case Received</span>
+        <span class="text-[10px] font-bold text-[#4ED0C4] uppercase tracking-wider" id="toastMetaCode">W02: Case Received</span>
         <span class="text-[10px] text-slate-500">Just now</span>
       </div>
       <p class="text-xs text-slate-200 mt-1" id="toastBody">
@@ -290,8 +292,8 @@
   <script>
     // 11 SYSTEM ROLES SPECIFICATION
     const ROLES = [
-      { code: 'P', name: 'Patient', arabic: 'المريض', color: 'bg-blue-600', text: 'text-blue-400', icon: 'fa-user', desc: 'Submits intake, uploads scans, pays invoice, attends video consultation.' },
-      { code: 'N', name: 'ALO Nurse', arabic: 'ممرض ألو', color: 'bg-emerald-600', text: 'text-emerald-400', icon: 'fa-user-nurse', desc: 'Audits file completeness, compiles bilingual clinical summary, live translator.' },
+      { code: 'P', name: 'Patient', arabic: 'المريض', color: 'bg-[#0C486B]', text: 'text-[#60A5FA]', icon: 'fa-user', desc: 'Submits intake, uploads scans, pays invoice, attends video consultation.' },
+      { code: 'N', name: 'ALO Nurse', arabic: 'ممرض ألو', color: 'bg-[#12806F]', text: 'text-[#4ED0C4]', icon: 'fa-user-nurse', desc: 'Audits file completeness, compiles bilingual clinical summary, live translator.' },
       { code: 'D', name: 'Saudi Doctor', arabic: 'الطبيب السعودي', color: 'bg-purple-600', text: 'text-purple-400', icon: 'fa-stethoscope', desc: 'Reviews case, selects Indian Consultant, authors 2 clinical focus questions.' },
       { code: 'C', name: 'ALO Coordinator', arabic: 'منسق الحالة', color: 'bg-amber-600', text: 'text-amber-400', icon: 'fa-clipboard-check', desc: 'Timezone sync (KSA UTC+3 vs IST UTC+5:30), verifies payment, audits translations.' },
       { code: 'K', name: 'Indian Consultant', arabic: 'الاستشاري العالمي', color: 'bg-cyan-600', text: 'text-cyan-400', icon: 'fa-user-doctor', desc: 'Super-specialist at KIMS/Aster. Reviews de-identified scans, submits written opinion.' },
@@ -526,7 +528,7 @@
             class="px-2.5 py-1 rounded-lg text-xs font-semibold shrink-0 transition flex items-center gap-1.5 border ${
               isSelected 
                 ? `${role.color} text-white border-white/40 shadow-md ring-2 ring-emerald-400/50 scale-105` 
-                : 'bg-slate-800 text-slate-300 border-slate-700/80 hover:bg-slate-700'
+                : 'bg-slate-800 text-slate-300 border-[#2A4D7D]/80 hover:bg-slate-700'
             }">
             <span class="w-4 h-4 rounded text-[10px] flex items-center justify-center font-bold bg-black/30">
               ${role.code}
@@ -553,9 +555,9 @@
         const isPassed = idx < state.currentStageIndex;
         const isCurrent = idx === state.currentStageIndex;
         
-        let badgeClass = 'bg-slate-800 text-slate-400 border-slate-700';
+        let badgeClass = 'bg-slate-800 text-slate-400 border-[#2A4D7D]';
         if (isPassed) {
-          badgeClass = 'bg-emerald-600 text-white border-emerald-400 shadow-md shadow-emerald-950';
+          badgeClass = 'bg-[#12806F] text-white border-[#4ED0C4] shadow-md shadow-emerald-950';
         } else if (isCurrent) {
           badgeClass = 'bg-amber-500 text-slate-950 font-black border-amber-300 pulse-ring shadow-lg';
         }
@@ -566,11 +568,11 @@
               <div class="w-8 h-8 rounded-full border flex items-center justify-center text-xs font-bold transition ${badgeClass} group-hover:scale-110">
                 ${isPassed ? '<i class="fa-solid fa-check"></i>' : idx + 1}
               </div>
-              <span class="text-[10px] mt-1 font-semibold ${isCurrent ? 'text-amber-400' : isPassed ? 'text-emerald-400' : 'text-slate-500'} truncate max-w-[80px] text-center">
+              <span class="text-[10px] mt-1 font-semibold ${isCurrent ? 'text-amber-400' : isPassed ? 'text-[#4ED0C4]' : 'text-slate-500'} truncate max-w-[80px] text-center">
                 ${stage.title.split(' ')[0]}
               </span>
             </div>
-            ${idx < STAGES.length - 1 ? `<div class="h-0.5 w-6 sm:w-10 ${isPassed ? 'bg-emerald-600' : 'bg-slate-800'} transition-colors duration-300"></div>` : ''}
+            ${idx < STAGES.length - 1 ? `<div class="h-0.5 w-6 sm:w-10 ${isPassed ? 'bg-[#12806F]' : 'bg-slate-800'} transition-colors duration-300"></div>` : ''}
           </div>
         `;
       }).join('');
@@ -616,14 +618,14 @@
         const completedCount = stage.conditions.filter(c => c.completed).length;
 
         // Dynamic Border & Header Styling
-        let cardBorder = 'border-slate-800/80 bg-slate-900/50 opacity-80';
-        let statusBadge = `<span class="px-2 py-0.5 text-[10px] rounded bg-slate-800 text-slate-400 border border-slate-700">Pending</span>`;
+        let cardBorder = 'border-[#1E3E6B]/80 bg-[#0E2340]/50 opacity-80';
+        let statusBadge = `<span class="px-2 py-0.5 text-[10px] rounded bg-slate-800 text-slate-400 border border-[#2A4D7D]">Pending</span>`;
         
         if (isPassed) {
-          cardBorder = 'border-emerald-800/50 bg-emerald-950/20';
-          statusBadge = `<span class="px-2 py-0.5 text-[10px] rounded bg-emerald-900/40 text-emerald-300 border border-emerald-700/50 flex items-center gap-1"><i class="fa-solid fa-check text-xs"></i> Completed</span>`;
+          cardBorder = 'border-emerald-800/50 bg-[#061C18]/20';
+          statusBadge = `<span class="px-2 py-0.5 text-[10px] rounded bg-emerald-900/40 text-[#7BE4DA] border border-emerald-700/50 flex items-center gap-1"><i class="fa-solid fa-check text-xs"></i> Completed</span>`;
         } else if (isCurrent) {
-          cardBorder = 'border-amber-500/80 bg-slate-900 shadow-2xl shadow-amber-950/30 ring-2 ring-amber-500/40 opacity-100';
+          cardBorder = 'border-amber-500/80 bg-[#0E2340] shadow-2xl shadow-amber-950/30 ring-2 ring-amber-500/40 opacity-100';
           statusBadge = `<span class="px-2 py-0.5 text-[10px] rounded bg-amber-500/20 text-amber-300 border border-amber-500/40 flex items-center gap-1 font-bold animate-pulse"><i class="fa-solid fa-circle-dot text-[8px]"></i> Active Stage</span>`;
         }
 
@@ -631,9 +633,9 @@
           <div id="stageCard_${actualIdx}" class="rounded-2xl border ${cardBorder} p-5 transition-all duration-300">
             
             <!-- STAGE HEADER -->
-            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-slate-800/80 pb-3">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-[#1E3E6B]/80 pb-3">
               <div class="flex items-center gap-3">
-                <div class="w-9 h-9 rounded-xl ${isPassed ? 'bg-emerald-600' : isCurrent ? 'bg-amber-500 text-slate-950 font-black' : 'bg-slate-800 text-slate-400'} flex items-center justify-center font-bold text-sm shrink-0 shadow-md">
+                <div class="w-9 h-9 rounded-xl ${isPassed ? 'bg-[#12806F]' : isCurrent ? 'bg-amber-500 text-slate-950 font-black' : 'bg-slate-800 text-slate-400'} flex items-center justify-center font-bold text-sm shrink-0 shadow-md">
                   ${isPassed ? '<i class="fa-solid fa-check text-white"></i>' : stage.code}
                 </div>
                 <div>
@@ -656,7 +658,7 @@
               <div class="flex items-center gap-3 shrink-0">
                 <div class="text-right">
                   <span class="text-[10px] text-slate-400 block uppercase">Checklist Progress</span>
-                  <span class="text-xs font-mono font-bold ${allCompleted ? 'text-emerald-400' : 'text-amber-400'}">
+                  <span class="text-xs font-mono font-bold ${allCompleted ? 'text-[#4ED0C4]' : 'text-amber-400'}">
                     ${completedCount}/${stage.conditions.length} Conditions Met
                   </span>
                 </div>
@@ -668,7 +670,7 @@
             <div class="mt-4 space-y-2.5">
               <div class="flex items-center justify-between text-xs text-slate-400 font-semibold mb-1">
                 <span class="tracking-wider uppercase text-[11px]">MANDATORY STAGE PREREQUISITES</span>
-                <span>${canAct ? '<span class="text-emerald-400 text-[11px] font-semibold"><i class="fa-solid fa-unlock"></i> Role Authorized to Verify</span>' : '<span class="text-slate-500 text-[11px]"><i class="fa-solid fa-lock"></i> Switch role to verify</span>'}</span>
+                <span>${canAct ? '<span class="text-[#4ED0C4] text-[11px] font-semibold"><i class="fa-solid fa-unlock"></i> Role Authorized to Verify</span>' : '<span class="text-slate-500 text-[11px]"><i class="fa-solid fa-lock"></i> Switch role to verify</span>'}</span>
               </div>
 
               ${stage.conditions.map((cond, cIdx) => {
@@ -676,8 +678,8 @@
                 return `
                   <div class="flex items-start gap-3 p-3 rounded-xl border transition-all duration-200 ${
                     isChecked 
-                      ? 'bg-emerald-950/30 border-emerald-700/50 text-slate-200 shadow-sm' 
-                      : 'bg-slate-950/60 border-slate-800 text-slate-300 hover:border-slate-700'
+                      ? 'bg-[#061C18]/30 border-emerald-700/50 text-slate-200 shadow-sm' 
+                      : 'bg-[#081324]/60 border-[#1E3E6B] text-slate-300 hover:border-[#2A4D7D]'
                   }">
                     
                     <div class="pt-0.5">
@@ -687,7 +689,7 @@
                         ${isChecked ? 'checked' : ''} 
                         ${!canAct ? 'disabled' : ''}
                         onchange="toggleCondition(${actualIdx}, ${cIdx})" 
-                        class="w-4 h-4 rounded border-slate-700 text-emerald-600 focus:ring-emerald-500 bg-slate-900 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed">
+                        class="w-4 h-4 rounded border-[#2A4D7D] text-emerald-600 focus:ring-emerald-500 bg-[#0E2340] cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed">
                     </div>
 
                     <label for="chk_${actualIdx}_${cIdx}" class="flex-1 text-xs cursor-pointer ${!canAct ? 'cursor-not-allowed' : ''}">
@@ -706,14 +708,14 @@
             </div>
 
             <!-- ACTION FOOTER & HAND-OFF CONTROLS -->
-            <div class="mt-4 pt-3 border-t border-slate-800/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <div class="mt-4 pt-3 border-t border-[#1E3E6B]/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
               
               <!-- Exception path trigger simulation -->
               <div class="flex items-center gap-2">
                 <span class="text-[10px] text-slate-500 font-mono">Edge Path:</span>
                 <button 
                   onclick="triggerException('${stage.exception.code}', '${stage.exception.label}')"
-                  class="text-[11px] px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-amber-300 border border-slate-700 flex items-center gap-1.5 transition">
+                  class="text-[11px] px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-amber-300 border border-[#2A4D7D] flex items-center gap-1.5 transition">
                   <i class="fa-solid fa-triangle-exclamation text-amber-400 text-xs"></i>
                   <span>${stage.exception.code}: ${stage.exception.label}</span>
                 </button>
@@ -728,15 +730,15 @@
                     class="w-full sm:w-auto px-4 py-2 text-xs font-bold rounded-xl transition shadow-lg flex items-center justify-center gap-2 ${
                       allCompleted && canAct
                         ? 'bg-gradient-to-r from-emerald-600 via-emerald-500 to-teal-500 hover:from-emerald-500 hover:to-teal-400 text-white shadow-emerald-950/60 cursor-pointer animate-bounce'
-                        : 'bg-slate-800 text-slate-500 border border-slate-700 cursor-not-allowed opacity-60'
+                        : 'bg-slate-800 text-slate-500 border border-[#2A4D7D] cursor-not-allowed opacity-60'
                     }">
                     <i class="fa-solid fa-circle-check"></i>
                     <span>Verify & Hand-Off to Next Stage</span>
                     <i class="fa-solid fa-arrow-right text-[10px]"></i>
                   </button>
                 ` : isPassed ? `
-                  <span class="text-xs text-emerald-400 flex items-center gap-1.5 font-semibold">
-                    <i class="fa-solid fa-check-double text-emerald-400"></i> Stage Verified & Handed Off
+                  <span class="text-xs text-[#4ED0C4] flex items-center gap-1.5 font-semibold">
+                    <i class="fa-solid fa-check-double text-[#4ED0C4]"></i> Stage Verified & Handed Off
                   </span>
                 ` : `
                   <span class="text-xs text-slate-500 flex items-center gap-1.5">
@@ -848,10 +850,10 @@
         document.getElementById(id).className = 'px-2 py-0.5 rounded text-slate-400 hover:text-white transition';
       });
 
-      if (ms === 1000) document.getElementById('spd1').className = 'px-2 py-0.5 rounded bg-emerald-600 text-white font-bold transition';
-      if (ms === 1800) document.getElementById('spd2').className = 'px-2 py-0.5 rounded bg-emerald-600 text-white font-bold transition';
-      if (ms === 3000) document.getElementById('spd3').className = 'px-2 py-0.5 rounded bg-emerald-600 text-white font-bold transition';
-      if (ms === 5000) document.getElementById('spd5').className = 'px-2 py-0.5 rounded bg-emerald-600 text-white font-bold transition';
+      if (ms === 1000) document.getElementById('spd1').className = 'px-2 py-0.5 rounded bg-[#12806F] text-white font-bold transition';
+      if (ms === 1800) document.getElementById('spd2').className = 'px-2 py-0.5 rounded bg-[#12806F] text-white font-bold transition';
+      if (ms === 3000) document.getElementById('spd3').className = 'px-2 py-0.5 rounded bg-[#12806F] text-white font-bold transition';
+      if (ms === 5000) document.getElementById('spd5').className = 'px-2 py-0.5 rounded bg-[#12806F] text-white font-bold transition';
 
       showToast(`Auto-demo speed set to ${ms/1000}s per stage`);
     }
@@ -880,7 +882,7 @@
       clearInterval(state.autoPlayTimerId);
       clearInterval(state.autoPlayProgressTimerId);
       
-      document.getElementById('btnAutoPlayToggle').className = 'px-4 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-2 shadow-lg bg-emerald-600 hover:bg-emerald-500 text-white shadow-emerald-950/60 ring-2 ring-emerald-400/30';
+      document.getElementById('btnAutoPlayToggle').className = 'px-4 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-2 shadow-lg bg-[#12806F] hover:bg-[#0E685A] text-white shadow-emerald-950/60 ring-2 ring-emerald-400/30';
       document.getElementById('autoPlayIcon').className = 'fa-solid fa-play';
       document.getElementById('autoPlayText').textContent = 'Run Auto-Demo';
       
@@ -972,7 +974,7 @@
       list.innerHTML = state.timeline.map(entry => {
         const roleObj = ROLES.find(r => r.code === entry.role) || { color: 'bg-slate-700', text: 'text-slate-300' };
         return `
-          <div class="relative pl-6 pb-4 border-l-2 border-slate-800 last:border-transparent">
+          <div class="relative pl-6 pb-4 border-l-2 border-[#1E3E6B] last:border-transparent">
             <div class="absolute -left-1.5 top-0 w-3 h-3 rounded-full ${roleObj.color} border-2 border-slate-900"></div>
             <div class="flex items-center justify-between text-[10px] text-slate-500 mb-0.5">
               <span class="font-bold uppercase ${roleObj.text}">[${entry.role}]</span>
