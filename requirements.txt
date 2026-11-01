@@ -1,0 +1,2 @@
+# ALO Doctor Platform - Python Dependencies
+# (Zero external dependencies required - standard library used)
