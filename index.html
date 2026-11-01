@@ -235,6 +235,26 @@
       </div>
     </div>
 
+        <!-- OFFICIAL EXCEPTION STATUSES RIBBON (Page 02 Specification) -->
+    <div class="flex items-center justify-between bg-[#0E2340]/60 border border-[#1E3E6B] rounded-xl px-4 py-2 text-xs">
+      <div class="flex items-center gap-2">
+        <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Case Statuses:</span>
+        <span class="px-2 py-0.5 rounded bg-[#12806F]/20 text-[#4ED0C4] border border-[#12806F]/40 font-mono text-[11px]">9 Master Stages</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Exception Statuses:</span>
+        <span class="px-2 py-0.5 rounded bg-amber-500/10 text-amber-300 border border-amber-500/30 text-[11px] flex items-center gap-1">
+          <i class="fa-solid fa-pause text-[9px]"></i> On hold
+        </span>
+        <span class="px-2 py-0.5 rounded bg-rose-500/10 text-rose-300 border border-rose-500/30 text-[11px] flex items-center gap-1">
+          <i class="fa-solid fa-ban text-[9px]"></i> Cancelled
+        </span>
+        <span class="px-2 py-0.5 rounded bg-purple-500/10 text-purple-300 border border-purple-500/30 text-[11px] flex items-center gap-1">
+          <i class="fa-solid fa-user-slash text-[9px]"></i> No-show
+        </span>
+      </div>
+    </div>
+
     <!-- HORIZONTAL FLOW STEPPER RIBBON -->
     <div class="bg-[#0E2340]/60 border border-[#1E3E6B]/80 rounded-xl p-3 shadow-inner overflow-x-auto">
       <div class="flex items-center min-w-[800px] justify-between relative" id="stepperRibbon">
@@ -310,8 +330,8 @@
       {
         id: 'STAGE_1',
         code: 'S01',
-        title: 'Intake & Registration',
-        arabic: 'استلام الحالة وتسجيل المريض',
+        title: 'Intake received',
+        arabic: 'استلام الحالة (Intake received)',
         ownerRole: 'P',
         sla: 'Instant',
         whatsappTemplate: 'W02: Case Received Confirmation',
@@ -331,8 +351,8 @@
       {
         id: 'STAGE_2',
         code: 'S02',
-        title: 'Nurse Triage & File Integrity Check',
-        arabic: 'فرز التمريض والتحقق من سلامة الملفات',
+        title: 'Nurse check',
+        arabic: 'تدقيق التمريض (Nurse check)',
         ownerRole: 'N',
         sla: '4 Hours',
         whatsappTemplate: 'W04: Files Verified Complete',
@@ -352,8 +372,8 @@
       {
         id: 'STAGE_3',
         code: 'S03',
-        title: 'Saudi Treating Doctor Review',
-        arabic: 'مراجعة الطبيب السعودي المعالج',
+        title: 'Doctor review',
+        arabic: 'مراجعة الطبيب (Doctor review)',
         ownerRole: 'D',
         sla: '24 Hours',
         whatsappTemplate: 'W05: Second Opinion Approved & Invoice Ready',
@@ -373,8 +393,8 @@
       {
         id: 'STAGE_4',
         code: 'S04',
-        title: 'Invoicing & Secure Payment Confirmation',
-        arabic: 'الفاتورة وتأكيد السداد الإلكتروني',
+        title: 'Awaiting payment',
+        arabic: 'بانتظار الدفع (Awaiting payment)',
         ownerRole: 'P',
         sla: '48 Hours',
         whatsappTemplate: 'W06: Payment Confirmed & Receipt Issued',
@@ -394,8 +414,8 @@
       {
         id: 'STAGE_5',
         code: 'S05',
-        title: 'Global Consultant De-Identified Review',
-        arabic: 'مراجعة الاستشاري الدولي للملفات المشفرة',
+        title: 'With consultant',
+        arabic: 'مع الاستشاري (With consultant)',
         ownerRole: 'K',
         sla: '48 Hours',
         whatsappTemplate: 'W07: Consultant Commenced Diagnostic Review',
@@ -415,8 +435,8 @@
       {
         id: 'STAGE_6',
         code: 'S06',
-        title: '3-Party Video Call & Second Opinion Synthesis',
-        arabic: 'المؤتمر المرئي الثلاثي وإصدار التقرير',
+        title: 'Opinion ready',
+        arabic: 'الرأي جاهز (Opinion ready)',
         ownerRole: 'K',
         sla: '24 Hours',
         whatsappTemplate: 'W10: Stamped Second Opinion Ready for Download',
@@ -436,8 +456,8 @@
       {
         id: 'STAGE_7',
         code: 'S07',
-        title: 'Local Saudi Partner Ecosystem Referrals',
-        arabic: 'إحالات الشركاء المحليين (المختبر، الصيدلية، التمريض)',
+        title: 'Partner services',
+        arabic: 'خدمات الشركاء (Partner services)',
         ownerRole: 'D',
         sla: '48 Hours',
         whatsappTemplate: 'W11: Partner Referral Orders Ready to Book',
@@ -457,8 +477,8 @@
       {
         id: 'STAGE_8',
         code: 'S08',
-        title: '21-Day Connected Care & Clarification Window',
-        arabic: 'نافذة المتابعة الطبية الممتدة لمدة 21 يوماً',
+        title: 'Follow-up 21 days',
+        arabic: 'المتابعة 21 يوماً (Follow-up 21 days)',
         ownerRole: 'P',
         sla: '21 Days',
         whatsappTemplate: 'W17: Doctor/Nurse Replied in Follow-up Chat',
@@ -478,8 +498,8 @@
       {
         id: 'STAGE_9',
         code: 'S09',
-        title: 'Case Closure & Quality Audit',
-        arabic: 'إغلاق الحالة وتقييم الجودة والخدمة',
+        title: 'Closed',
+        arabic: 'مغلقة (Closed)',
         ownerRole: 'AD',
         sla: 'Terminal',
         whatsappTemplate: 'W20: Case Closed & Experience Survey',
