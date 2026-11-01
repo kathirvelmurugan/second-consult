@@ -1,0 +1,13 @@
+{
+  "name": "alo-doctor-flow-cockpit",
+  "version": "1.0.0",
+  "description": "ALO Doctor Platform Single-Page Flow Cockpit & Role Engine",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "build": "echo 'No build required for static assets'"
+  },
+  "keywords": ["alo-doctor", "flow-cockpit", "role-switcher"],
+  "author": "ALO Doctor Team",
+  "license": "ISC"
+}
