@@ -6,6 +6,10 @@ PORT = int(os.environ.get("PORT", 8080))
 
 class SPAServer(http.server.SimpleHTTPRequestHandler):
     def do_GET(self):
+        # Route /blockdiagram and /flow to blockdiagram.html
+        if self.path in ['/blockdiagram', '/flow', '/blockdiagram/', '/flow/']:
+            self.path = '/blockdiagram.html'
+        
         # Resolve requested file path
         requested_path = self.translate_path(self.path)
         # If file doesn't exist, route to index.html for Single-Page Application

@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-[#081324] text-slate-100">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ALO DOCTOR | Master Block Diagram Flow</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            alo: {
+              navy: '#0E2340',
+              deep: '#081324',
+              card: '#122B4D',
+              border: '#1E3E6B',
+              teal: '#12806F',
+              mint: '#4ED0C4',
+              wash: '#E9F6F2',
+              sand: '#F5F1EB',
+              amber: '#D97706',
+              rose: '#BE123C'
+            }
+          },
+          animation: {
+            'glow-pulse': 'glowPulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+          },
+          keyframes: {
+            glowPulse: {
+              '0%, 100%': { boxShadow: '0 0 15px 2px rgba(78, 208, 196, 0.6)' },
+              '50%': { boxShadow: '0 0 30px 6px rgba(78, 208, 196, 0.9)' }
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    .flow-connector {
+      stroke-dasharray: 6;
+      animation: dash 1.5s linear infinite;
+    }
+    @keyframes dash {
+      to { stroke-dashoffset: -12; }
+    }
+  </style>
+</head>
+<body class="min-h-full flex flex-col font-sans antialiased text-slate-200 bg-[#081324]">
+
+  <!-- TOP HEADER -->
+  <header class="sticky top-0 z-50 bg-[#0E2340]/95 backdrop-blur-md border-b border-[#1E3E6B] px-4 py-2.5 shadow-xl">
+    <div class="max-w-7xl mx-auto flex items-center justify-between gap-4">
+      
+      <!-- Brand & Title -->
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-[#12806F] to-[#4ED0C4] flex items-center justify-center font-black text-white shadow-lg text-lg border border-[#4ED0C4]/30">
+          ع
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-base sm:text-lg font-black tracking-tight text-white flex items-center gap-2">
+              ALO DOCTOR <span class="text-[10px] px-2 py-0.5 rounded-full bg-[#12806F]/20 text-[#4ED0C4] border border-[#12806F]/40 font-bold uppercase">Flow Diagram</span>
+            </h1>
+          </div>
+          <p class="text-[11px] text-slate-400">Mermaid-Style Visual Clinical Architecture · Animated End-to-End</p>
+        </div>
+      </div>
+
+      <!-- Live Action Step Pill -->
+      <div class="hidden md:flex items-center gap-3 bg-[#081324] px-4 py-1.5 rounded-xl border border-[#1E3E6B] text-xs">
+        <span class="text-slate-400 text-[11px]">Current Step:</span>
+        <span id="activeStepBadge" class="font-bold text-[#4ED0C4] font-mono">1. Patient Enters Details</span>
+      </div>
+
+      <!-- Navigation & Links -->
+      <div class="flex items-center gap-2">
+        <a href="/" class="px-3 py-1.5 text-xs bg-[#122B4D] hover:bg-[#1E3E6B] text-slate-200 rounded-lg border border-[#1E3E6B] transition flex items-center gap-1.5">
+          <i class="fa-solid fa-table-columns"></i>
+          <span class="hidden sm:inline">Clinical Cockpit</span>
+        </a>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- ANIMATION CONTROLLER DOCK -->
+  <div class="sticky top-[59px] z-40 bg-[#0E2340]/90 backdrop-blur-md border-b border-[#1E3E6B] px-4 py-2 shadow-lg">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
+      
+      <!-- Play / Pause & Step Navigation -->
+      <div class="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-start">
+        <button 
+          id="btnPlayToggle" 
+          onclick="togglePlay()" 
+          class="px-4 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-2 shadow-lg bg-[#12806F] hover:bg-[#0E685A] text-white ring-2 ring-[#4ED0C4]/30">
+          <i id="playIcon" class="fa-solid fa-play"></i>
+          <span id="playText">Run Flow Animation</span>
+        </button>
+
+        <button onclick="prevStep()" class="p-2 text-xs bg-[#122B4D] hover:bg-[#1E3E6B] text-slate-200 rounded-lg border border-[#1E3E6B] transition">
+          <i class="fa-solid fa-backward-step"></i>
+        </button>
+        <button onclick="nextStep()" class="p-2 text-xs bg-[#122B4D] hover:bg-[#1E3E6B] text-slate-200 rounded-lg border border-[#1E3E6B] transition">
+          <i class="fa-solid fa-forward-step"></i>
+        </button>
+        <button onclick="resetDiagram()" class="p-2 text-xs bg-[#122B4D] hover:bg-[#1E3E6B] text-slate-200 rounded-lg border border-[#1E3E6B] transition" title="Restart">
+          <i class="fa-solid fa-arrow-rotate-left"></i>
+        </button>
+      </div>
+
+      <!-- Progress Countdown -->
+      <div class="w-full sm:w-72 flex flex-col gap-1">
+        <div class="flex items-center justify-between text-[10px] text-slate-400">
+          <span>Flow Step Transition</span>
+          <span id="stepTimerText" class="font-mono text-[#4ED0C4] font-bold">Ready</span>
+        </div>
+        <div class="w-full h-1.5 bg-[#081324] rounded-full overflow-hidden border border-[#1E3E6B]/50">
+          <div id="stepProgressBar" class="h-full bg-gradient-to-r from-[#12806F] to-[#4ED0C4] w-0 transition-all duration-75"></div>
+        </div>
+      </div>
+
+      <!-- Speed Control -->
+      <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
+        <span class="text-[11px] text-slate-400">Speed:</span>
+        <div class="flex items-center bg-[#081324] rounded-lg border border-[#1E3E6B] p-0.5 text-xs font-mono">
+          <button onclick="setSpeed(5000)" id="spd5" class="px-2 py-0.5 rounded text-slate-400 hover:text-white">5s</button>
+          <button onclick="setSpeed(3000)" id="spd3" class="px-2 py-0.5 rounded bg-[#12806F] text-white font-bold">3s</button>
+          <button onclick="setSpeed(1800)" id="spd2" class="px-2 py-0.5 rounded text-slate-400 hover:text-white">2s</button>
+          <button onclick="setSpeed(1000)" id="spd1" class="px-2 py-0.5 rounded text-slate-400 hover:text-white">1s</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- MAIN CANVAS (ONE SINGLE VIEW FLOW DIAGRAM) -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 flex flex-col justify-between space-y-6">
+
+    <!-- LIVE EXPLANATION BANNER -->
+    <div id="explainerCard" class="bg-[#0E2340] border border-[#1E3E6B] rounded-2xl p-4 shadow-xl flex items-center justify-between gap-4 transition-all duration-300">
+      <div class="flex items-center gap-3.5">
+        <div id="explainerIcon" class="w-11 h-11 rounded-xl bg-[#12806F]/20 text-[#4ED0C4] flex items-center justify-center font-bold text-xl border border-[#4ED0C4]/30 shrink-0">
+          <i class="fa-solid fa-user"></i>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <span id="explainerStepNum" class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-[#12806F]/20 text-[#4ED0C4] border border-[#12806F]/40 font-mono">
+              STEP 1 / 10
+            </span>
+            <h2 id="explainerTitle" class="text-sm font-bold text-white">Patient Enters Details & Diagnostic Scans</h2>
+          </div>
+          <p id="explainerDesc" class="text-xs text-slate-300 mt-0.5">
+            Patient registers via Saudi mobile OTP, describes clinical symptoms, and drops MRI, CT, or Echocardiogram scans on WhatsApp or Mobile App.
+          </p>
+        </div>
+      </div>
+      <div class="hidden sm:block text-right shrink-0">
+        <span class="text-[10px] text-slate-400 block uppercase">Channel</span>
+        <span id="explainerChannel" class="text-xs font-mono font-bold text-[#4ED0C4]">WhatsApp / App (P01–P17)</span>
+      </div>
+    </div>
+
+    <!-- MERMAID-STYLE FLOW BLOCKS CANVAS (ALL IN ONE SINGLE VIEW) -->
+    <div class="relative bg-[#0E2340]/60 border border-[#1E3E6B] rounded-3xl p-6 shadow-2xl backdrop-blur-sm">
+      
+      <!-- Background SVG Connection Grid -->
+      <svg class="absolute inset-0 w-full h-full pointer-events-none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="activeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#12806F" />
+            <stop offset="100%" stop-color="#4ED0C4" />
+          </linearGradient>
+        </defs>
+        <!-- Horizontal Connectors -->
+        <line x1="20%" y1="20%" x2="45%" y2="20%" stroke="#1E3E6B" stroke-width="2" id="line1" />
+        <line x1="55%" y1="20%" x2="80%" y2="20%" stroke="#1E3E6B" stroke-width="2" id="line2" />
+        <line x1="80%" y1="28%" x2="80%" y2="45%" stroke="#1E3E6B" stroke-width="2" id="line3" />
+        <line x1="80%" y1="52%" x2="55%" y2="52%" stroke="#1E3E6B" stroke-width="2" id="line4" />
+        <line x1="45%" y1="52%" x2="20%" y2="52%" stroke="#1E3E6B" stroke-width="2" id="line5" />
+        <line x1="20%" y1="60%" x2="20%" y2="78%" stroke="#1E3E6B" stroke-width="2" id="line6" />
+        <line x1="28%" y1="84%" x2="50%" y2="84%" stroke="#1E3E6B" stroke-width="2" id="line7" />
+        <line x1="60%" y1="84%" x2="82%" y2="84%" stroke="#1E3E6B" stroke-width="2" id="line8" />
+      </svg>
+
+      <!-- 10 ARCHITECTURE NODES GRID -->
+      <div class="relative z-10 grid grid-cols-1 md:grid-cols-4 gap-6">
+
+        <!-- ROW 1: INTAKE & PRE-PAYMENT -->
+        <!-- Block 1 -->
+        <div id="node1" onclick="jumpTo(1)" class="cursor-pointer rounded-2xl p-4 bg-[#122B4D] border-2 border-[#1E3E6B] transition-all duration-300 shadow-lg relative group hover:border-[#4ED0C4]">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-blue-500/20 text-blue-300 font-bold">1. INTAKE</span>
+            <i class="fa-solid fa-mobile-screen text-slate-400 group-hover:text-[#4ED0C4]"></i>
+          </div>
+          <h3 class="font-bold text-sm text-white mb-1">Patient Enters Details</h3>
+          <p class="text-[11px] text-slate-300">Registers with Saudi ID/OTP, describes symptoms, uploads scans.</p>
+          <div class="mt-3 flex items-center justify-between text-[10px] text-slate-400 border-t border-[#1E3E6B]/80 pt-2">
+            <span>Role: <strong class="text-blue-300">Patient [P]</strong></span>
+            <span>P01–P17</span>
+          </div>
+        </div>
+
+        <!-- Block 2 -->
+        <div id="node2" onclick="jumpTo(2)" class="cursor-pointer rounded-2xl p-4 bg-[#122B4D] border-2 border-[#1E3E6B] transition-all duration-300 shadow-lg relative group hover:border-[#4ED0C4]">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/20 text-[#4ED0C4] font-bold">2. TRIAGE</span>
+            <i class="fa-solid fa-user-nurse text-slate-400 group-hover:text-[#4ED0C4]"></i>
+          </div>
+          <h3 class="font-bold text-sm text-white mb-1">ALO Nurse Checks</h3>
+          <p class="text-[11px] text-slate-300">Audits DICOM readability, redacts PII, drafts bilingual intake note.</p>
+          <div class="mt-3 flex items-center justify-between text-[10px] text-slate-400 border-t border-[#1E3E6B]/80 pt-2">
+            <span>Role: <strong class="text-[#4ED0C4]">Nurse [N]</strong></span>
+            <span>N01–N07</span>
+          </div>
+        </div>
+
+        <!-- Block 3 -->
+        <div id="node3" onclick="jumpTo(3)" class="cursor-pointer rounded-2xl p-4 bg-[#122B4D] border-2 border-[#1E3E6B] transition-all duration-300 shadow-lg relative group hover:border-[#4ED0C4]">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-purple-500/20 text-purple-300 font-bold">3. REVIEW</span>
+            <i class="fa-solid fa-stethoscope text-slate-400 group-hover:text-[#4ED0C4]"></i>
+          </div>
+          <h3 class="font-bold text-sm text-white mb-1">Saudi Doctor Reviews</h3>
+          <p class="text-[11px] text-slate-300">Validates case, selects Indian Consultant & authors 2 clinical questions.</p>
+          <div class="mt-3 flex items-center justify-between text-[10px] text-slate-400 border-t border-[#1E3E6B]/80 pt-2">
+            <span>Role: <strong class="text-purple-300">Saudi Doctor [D]</strong></span>
+            <span>D01–D06</span>
+          </div>
+        </div>
+
+        <!-- Block 4 -->
+        <div id="node4" onclick="jumpTo(4)" class="cursor-pointer rounded-2xl p-4 bg-[#122B4D] border-2 border-[#1E3E6B] transition-all duration-300 shadow-lg relative group hover:border-[#4ED0C4]">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 font-bold">4. PAYMENT</span>
+            <i class="fa-solid fa-credit-card text-slate-400 group-hover:text-[#4ED0C4]"></i>
+          </div>
+          <h3 class="font-bold text-sm text-white mb-1">Patient Pays</h3>
+          <p class="text-[11px] text-slate-300">Settles invoice via Mada / Apple Pay; VAT receipt issued.</p>
+          <div class="mt-3 flex items-center justify-between text-[10px] text-slate-400 border-t border-[#1E3E6B]/80 pt-2">
+            <span>Role: <strong class="text-amber-300">Patient [P]</strong></span>
+            <span>P19–P21</span>
+          </div>
+        </div>
+
+        <!-- ROW 2: OPINION & CALL -->
+        <!-- Block 5 -->
+        <div id="node5" onclick="jumpTo(5)" class="cursor-pointer rounded-2xl p-4 bg-[#122B4D] border-2 border-[#1E3E6B] transition-all duration-300 shadow-lg relative group hover:border-[#4ED0C4]">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 font-bold">5. CONSULTANT</span>
+            <i class="fa-solid fa-user-doctor text-slate-400 group-hover:text-[#4ED0C4]"></i>
+          </div>
+          <h3 class="font-bold text-sm text-white mb-1">Consultant Accepts</h3>
+          <p class="text-[11px] text-slate-300">Reviews de-identified files in 48h SLA, proposes video call slots.</p>
+          <div class="mt-3 flex items-center justify-between text-[10px] text-slate-400 border-t border-[#1E3E6B]/80 pt-2">
+            <span>Role: <strong class="text-cyan-300">Consultant [K]</strong></span>
+            <span>K01–K07</span>
+          </div>
+        </div>
+
+        <!-- Block 6 -->
+        <div id="node6" onclick="jumpTo(6)" class="cursor-pointer rounded-2xl p-4 bg-[#122B4D] border-2 border-[#1E3E6B] transition-all duration-300 shadow-lg relative group hover:border-[#4ED0C4]">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-rose-500/20 text-rose-300 font-bold">6. VIDEO CALL</span>
+            <i class="fa-solid fa-video text-slate-400 group-hover:text-[#4ED0C4]"></i>
+          </div>
+          <h3 class="font-bold text-sm text-white mb-1">3-Party Video Call</h3>
+          <p class="text-[11px] text-slate-300">Patient, Saudi Doctor, Indian Consultant & Nurse live translating.</p>
+          <div class="mt-3 flex items-center justify-between text-[10px] text-slate-400 border-t border-[#1E3E6B]/80 pt-2">
+            <span>Team: <strong class="text-rose-300">P + D + K + N</strong></span>
+            <span>P23, K08</span>
+          </div>
+        </div>
+
+        <!-- Block 7 -->
+        <div id="node7" onclick="jumpTo(7)" class="cursor-pointer rounded-2xl p-4 bg-[#122B4D] border-2 border-[#1E3E6B] transition-all duration-300 shadow-lg relative group hover:border-[#4ED0C4]">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-teal-500/20 text-[#4ED0C4] font-bold">7. REPORT</span>
+            <i class="fa-solid fa-file-pdf text-slate-400 group-hover:text-[#4ED0C4]"></i>
+          </div>
+          <h3 class="font-bold text-sm text-white mb-1">Opinion Certified</h3>
+          <p class="text-[11px] text-slate-300">Consultant writes report; Coordinator verifies Arabic translation.</p>
+          <div class="mt-3 flex items-center justify-between text-[10px] text-slate-400 border-t border-[#1E3E6B]/80 pt-2">
+            <span>Role: <strong class="text-[#4ED0C4]">Coord [C]</strong></span>
+            <span>C08, P25</span>
+          </div>
+        </div>
+
+        <!-- Block 8 -->
+        <div id="node8" onclick="jumpTo(8)" class="cursor-pointer rounded-2xl p-4 bg-[#122B4D] border-2 border-[#1E3E6B] transition-all duration-300 shadow-lg relative group hover:border-[#4ED0C4]">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-orange-500/20 text-orange-300 font-bold">8. PARTNERS</span>
+            <i class="fa-solid fa-handshake-angle text-slate-400 group-hover:text-[#4ED0C4]"></i>
+          </div>
+          <h3 class="font-bold text-sm text-white mb-1">Doctor Orders Care</h3>
+          <p class="text-[11px] text-slate-300">Saudi Doctor activates Lab, Pharmacy, Home Nursing & Physio orders.</p>
+          <div class="mt-3 flex items-center justify-between text-[10px] text-slate-400 border-t border-[#1E3E6B]/80 pt-2">
+            <span>Partners: <strong class="text-orange-300">L, H, T, V</strong></span>
+            <span>D10, L01</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ROW 3: FOLLOW-UP & CLOSURE -->
+      <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
+        
+        <!-- Block 9 -->
+        <div id="node9" onclick="jumpTo(9)" class="cursor-pointer rounded-2xl p-4 bg-[#122B4D] border-2 border-[#1E3E6B] transition-all duration-300 shadow-lg relative group hover:border-[#4ED0C4]">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 font-bold">9. FOLLOW-UP</span>
+            <i class="fa-solid fa-comments text-slate-400 group-hover:text-[#4ED0C4]"></i>
+          </div>
+          <h3 class="font-bold text-sm text-white mb-1">21-Day Connected Care</h3>
+          <p class="text-[11px] text-slate-300">Patient asks direct clarification questions to Nurse and Doctor in dedicated chat.</p>
+          <div class="mt-3 flex items-center justify-between text-[10px] text-slate-400 border-t border-[#1E3E6B]/80 pt-2">
+            <span>Window: <strong class="text-indigo-300">21 Calendar Days</strong></span>
+            <span>P27, D11</span>
+          </div>
+        </div>
+
+        <!-- Block 10 -->
+        <div id="node10" onclick="jumpTo(10)" class="cursor-pointer rounded-2xl p-4 bg-[#122B4D] border-2 border-[#1E3E6B] transition-all duration-300 shadow-lg relative group hover:border-[#4ED0C4]">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/20 text-[#4ED0C4] font-bold">10. CLOSED</span>
+            <i class="fa-solid fa-box-archive text-slate-400 group-hover:text-[#4ED0C4]"></i>
+          </div>
+          <h3 class="font-bold text-sm text-white mb-1">Case Closed & Archived</h3>
+          <p class="text-[11px] text-slate-300">Encrypted in-Kingdom storage locked. WhatsApp W20 sends 5-star experience survey.</p>
+          <div class="mt-3 flex items-center justify-between text-[10px] text-slate-400 border-t border-[#1E3E6B]/80 pt-2">
+            <span>Audit: <strong class="text-[#4ED0C4]">MOH / NDMO</strong></span>
+            <span>P30, W20</span>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- FOOTER LINK -->
+    <div class="text-center text-xs text-slate-500">
+      <span>Al-Otaibi Medical Connected Platform · Saudi Healthcare Edition v2.4</span>
+    </div>
+
+  </main>
+
+  <!-- JAVASCRIPT ANIMATION ENGINE -->
+  <script>
+    const STEPS = [
+      {
+        num: 1,
+        title: 'Patient Enters Details & Diagnostic Scans',
+        desc: 'Patient registers via Saudi mobile OTP, describes clinical symptoms, and drops MRI, CT, or Echocardiogram scans on WhatsApp or Mobile App.',
+        channel: 'WhatsApp / App (P01–P17)',
+        icon: 'fa-user'
+      },
+      {
+        num: 2,
+        title: 'ALO Nurse Audits Files & Redacts Identity',
+        desc: 'ALO Nurse inspects medical scan readability, confirms patient consent, drafts a comprehensive bilingual clinical summary note, and hides patient identity for the privacy firewall.',
+        channel: 'Nurse Portal Inbox (N01–N07)',
+        icon: 'fa-user-nurse'
+      },
+      {
+        num: 3,
+        title: 'Saudi Treating Doctor Reviews Case & Authors 2 Questions',
+        desc: 'The licensed Saudi physician reviews the medical summary, selects target Indian Super-Specialist Consultant at KIMS/Aster, and authors exactly 2 clinical focus questions.',
+        channel: 'Doctor Portal (D01–D06)',
+        icon: 'fa-stethoscope'
+      },
+      {
+        num: 4,
+        title: 'Patient Settles Invoice via Mada / Apple Pay',
+        desc: 'Patient receives tokenized WhatsApp link W05 (/p/{token}/pay), opens secure payment sheet, and settles 1,800 SAR + 15% VAT. Webhook verifies receipt W06.',
+        channel: 'Mada / Apple Pay Sheet (P19–P21)',
+        icon: 'fa-credit-card'
+      },
+      {
+        num: 5,
+        title: 'Indian Consultant Accepts Within 48h SLA',
+        desc: 'Consultant reviews de-identified clinical scans on English Doctor App, accepts case assignment within 48h SLA window, and submits available call time slots.',
+        channel: 'Consultant Doctor App (K01–K07)',
+        icon: 'fa-user-doctor'
+      },
+      {
+        num: 6,
+        title: '3-Party WebRTC Video Conference Conducted',
+        desc: 'Patient, Saudi Treating Doctor, and Indian Super-Consultant join secure WebRTC call. ALO Nurse provides live Arabic/English medical interpretation.',
+        channel: 'WebRTC Room (P23, D08, K08, N08)',
+        icon: 'fa-video'
+      },
+      {
+        num: 7,
+        title: 'Certified Bilingual PDF Report Stamped & Issued',
+        desc: 'Consultant authors formal English medical report. Coordinator audits certified Arabic translation, digitally stamps report, and dispatches download link to patient.',
+        channel: 'Coordinator Desk (C08, P25)',
+        icon: 'fa-file-pdf'
+      },
+      {
+        num: 8,
+        title: 'Saudi Doctor Activates Local Partner Prescriptions',
+        desc: 'Saudi Doctor reviews second opinion and issues partner orders: home phlebotomy lab dispatch, pharmacy e-prescription with generic substitution, or physio/nursing care.',
+        channel: 'Partner Portals (D10, L01, H01, V01, T01)',
+        icon: 'fa-handshake-angle'
+      },
+      {
+        num: 9,
+        title: '21-Day Connected Care & Clarification Window Opens',
+        desc: 'Patient has a 21-day direct chat channel with ALO Nurse and Saudi Doctor for any post-opinion questions, lab result interpretation, and recovery monitoring.',
+        channel: 'Direct Care Chat (P27, D11)',
+        icon: 'fa-comments'
+      },
+      {
+        num: 10,
+        title: 'Case Closed & 5-Star Experience Survey Dispatched',
+        desc: '21-day period concludes with zero pending queries. All files locked under in-Kingdom data residency. WhatsApp W20 sends 5-star patient satisfaction survey. Case Closed!',
+        channel: 'Archival & WhatsApp W20 (P30)',
+        icon: 'fa-box-archive'
+      }
+    ];
+
+    let currentStep = 1;
+    let isPlaying = false;
+    let stepSpeedMs = 3000;
+    let timerProgressId = null;
+    let elapsedMs = 0;
+
+    function renderActiveStep(stepNum) {
+      currentStep = stepNum;
+      const stepData = STEPS[stepNum - 1];
+
+      // Update Explainer Banner
+      document.getElementById('explainerStepNum').textContent = `STEP ${stepData.num} / 10`;
+      document.getElementById('explainerTitle').textContent = stepData.title;
+      document.getElementById('explainerDesc').textContent = stepData.desc;
+      document.getElementById('explainerChannel').textContent = stepData.channel;
+      document.getElementById('explainerIcon').innerHTML = `<i class="fa-solid ${stepData.icon}"></i>`;
+      document.getElementById('activeStepBadge').textContent = `${stepData.num}. ${stepData.title.split(' ')[0]} ${stepData.title.split(' ')[1] || ''}`;
+
+      // Highlight corresponding node
+      for (let i = 1; i <= 10; i++) {
+        const el = document.getElementById(`node${i}`);
+        if (!el) continue;
+
+        if (i === stepNum) {
+          // ACTIVE NODE
+          el.className = 'cursor-pointer rounded-2xl p-4 bg-[#122B4D] border-2 border-[#4ED0C4] shadow-2xl shadow-[#4ED0C4]/30 scale-105 z-20 transition-all duration-300 ring-4 ring-[#4ED0C4]/20';
+        } else if (i < stepNum) {
+          // COMPLETED NODE
+          el.className = 'cursor-pointer rounded-2xl p-4 bg-[#0E2340] border-2 border-[#12806F] opacity-90 transition-all duration-300 shadow-md';
+        } else {
+          // UPCOMING NODE
+          el.className = 'cursor-pointer rounded-2xl p-4 bg-[#0E2340]/40 border-2 border-[#1E3E6B]/60 opacity-60 transition-all duration-300 shadow-none';
+        }
+      }
+    }
+
+    function togglePlay() {
+      if (isPlaying) {
+        pauseAnimation();
+      } else {
+        startAnimation();
+      }
+    }
+
+    function startAnimation() {
+      isPlaying = true;
+      document.getElementById('playIcon').className = 'fa-solid fa-pause';
+      document.getElementById('playText').textContent = 'Pause Flow';
+      document.getElementById('btnPlayToggle').className = 'px-4 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-2 shadow-lg bg-amber-500 hover:bg-amber-400 text-slate-950 ring-2 ring-amber-300/40 animate-pulse';
+      runTimerLoop();
+    }
+
+    function pauseAnimation() {
+      isPlaying = false;
+      clearInterval(timerProgressId);
+      document.getElementById('playIcon').className = 'fa-solid fa-play';
+      document.getElementById('playText').textContent = 'Run Flow Animation';
+      document.getElementById('btnPlayToggle').className = 'px-4 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-2 shadow-lg bg-[#12806F] hover:bg-[#0E685A] text-white ring-2 ring-[#4ED0C4]/30';
+      document.getElementById('stepProgressBar').style.width = '0%';
+      document.getElementById('stepTimerText').textContent = 'Paused';
+    }
+
+    function runTimerLoop() {
+      if (!isPlaying) return;
+
+      renderActiveStep(currentStep);
+
+      elapsedMs = 0;
+      const intervalTick = 50;
+      clearInterval(timerProgressId);
+
+      timerProgressId = setInterval(() => {
+        if (!isPlaying) {
+          clearInterval(timerProgressId);
+          return;
+        }
+
+        elapsedMs += intervalTick;
+        const percent = Math.min(100, (elapsedMs / stepSpeedMs) * 100);
+        document.getElementById('stepProgressBar').style.width = `${percent}%`;
+
+        const timeLeft = Math.max(0, (stepSpeedMs - elapsedMs) / 1000).toFixed(1);
+        document.getElementById('stepTimerText').textContent = `${timeLeft}s to next block`;
+
+        if (elapsedMs >= stepSpeedMs) {
+          clearInterval(timerProgressId);
+          if (currentStep < 10) {
+            currentStep++;
+            runTimerLoop();
+          } else {
+            pauseAnimation();
+            document.getElementById('stepTimerText').textContent = 'Flow Finished';
+          }
+        }
+      }, intervalTick);
+    }
+
+    function prevStep() {
+      pauseAnimation();
+      if (currentStep > 1) {
+        renderActiveStep(currentStep - 1);
+      }
+    }
+
+    function nextStep() {
+      pauseAnimation();
+      if (currentStep < 10) {
+        renderActiveStep(currentStep + 1);
+      }
+    }
+
+    function jumpTo(stepNum) {
+      pauseAnimation();
+      renderActiveStep(stepNum);
+    }
+
+    function resetDiagram() {
+      pauseAnimation();
+      renderActiveStep(1);
+    }
+
+    function setSpeed(ms) {
+      stepSpeedMs = ms;
+      ['spd1', 'spd2', 'spd3', 'spd5'].forEach(id => {
+        document.getElementById(id).className = 'px-2 py-0.5 rounded text-slate-400 hover:text-white';
+      });
+      if (ms === 1000) document.getElementById('spd1').className = 'px-2 py-0.5 rounded bg-[#12806F] text-white font-bold';
+      if (ms === 1800) document.getElementById('spd2').className = 'px-2 py-0.5 rounded bg-[#12806F] text-white font-bold';
+      if (ms === 3000) document.getElementById('spd3').className = 'px-2 py-0.5 rounded bg-[#12806F] text-white font-bold';
+      if (ms === 5000) document.getElementById('spd5').className = 'px-2 py-0.5 rounded bg-[#12806F] text-white font-bold';
+    }
+
+    window.onload = () => {
+      renderActiveStep(1);
+    };
+  </script>
+</body>
+</html>
